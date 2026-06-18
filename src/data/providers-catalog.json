@@ -1,0 +1,206 @@
+{
+  "version": "1.0.0",
+  "description": "Registro de proveedores con endpoints, autenticación y soporte multi-cuenta",
+  "lastUpdated": "2026-06-07",
+  "providers": [
+    {
+      "id": "opencode-go",
+      "name": "OpenCode GO",
+      "description": "Plataforma principal de desarrollo AI con soporte multi-modelo gratuito",
+      "type": "platform",
+      "endpoint": "https://opencode.ai/api",
+      "auth": {
+        "method": "env_variable",
+        "env_key_pattern": "OPENCODE_GO_{N}_AUTH",
+        "auth_type": "bearer_token",
+        "login_command": "opencode auth login",
+        "notes": "Requiere autenticación via CLI. Cada cuenta tiene rate limits independientes."
+      },
+      "multi_account": true,
+      "max_accounts": 5,
+      "rate_limit_strategy": "per_account",
+      "supported_models": [
+        "kimi-k2.6", "deepseek-v4-flash", "deepseek-v4-pro",
+        "glm-5.1", "qwen3.6-plus", "qwen3.5-plus",
+        "mimo-v2-omni", "mimo-v2.5-pro",
+        "minimax-m2.5", "minimax-m2.7"
+      ],
+      "config_format": "opencode.json",
+      "model_prefix": null,
+      "features": {
+        "streaming": true,
+        "tool_use": true,
+        "vision": true,
+        "file_upload": true
+      }
+    },
+    {
+      "id": "openrouter",
+      "name": "OpenRouter",
+      "description": "Agregador de modelos AI con acceso unificado a múltiples proveedores",
+      "type": "aggregator",
+      "endpoint": "https://openrouter.ai/api/v1",
+      "auth": {
+        "method": "api_key",
+        "env_key_pattern": "OPENROUTER_API_KEY",
+        "auth_type": "bearer_token",
+        "header": "Authorization",
+        "notes": "API key única. Soporta todos los modelos vía prefijo proveedor/modelo."
+      },
+      "multi_account": false,
+      "max_accounts": 1,
+      "rate_limit_strategy": "global",
+      "supported_models": [
+        "kimi-k2.6", "deepseek-v4-flash", "deepseek-v4-pro",
+        "glm-5.1", "qwen3.6-plus", "qwen3.5-plus",
+        "mimo-v2-omni", "mimo-v2.5-pro", "mimo-v2-flash",
+        "minimax-m3", "minimax-m2.5", "minimax-m2.7"
+      ],
+      "config_format": "openrouter",
+      "model_prefix": "{provider}/",
+      "features": {
+        "streaming": true,
+        "tool_use": true,
+        "vision": true,
+        "file_upload": false
+      }
+    },
+    {
+      "id": "deepseek-api",
+      "name": "DeepSeek API",
+      "description": "API directa de DeepSeek para modelos V4",
+      "type": "direct",
+      "endpoint": "https://api.deepseek.com/v1",
+      "auth": {
+        "method": "api_key",
+        "env_key_pattern": "DEEPSEEK_API_KEY",
+        "auth_type": "bearer_token",
+        "header": "Authorization",
+        "notes": "API key directa de DeepSeek. Mejor latencia para modelos DeepSeek."
+      },
+      "multi_account": false,
+      "max_accounts": 1,
+      "rate_limit_strategy": "global",
+      "supported_models": [
+        "deepseek-v4-flash", "deepseek-v4-pro"
+      ],
+      "config_format": "openai_compatible",
+      "model_prefix": null,
+      "features": {
+        "streaming": true,
+        "tool_use": true,
+        "vision": false,
+        "file_upload": false
+      }
+    },
+    {
+      "id": "moonshot",
+      "name": "Moonshot AI (Kimi)",
+      "description": "API directa de Moonshot para modelos Kimi",
+      "type": "direct",
+      "endpoint": "https://api.moonshot.cn/v1",
+      "auth": {
+        "method": "api_key",
+        "env_key_pattern": "MOONSHOT_API_KEY",
+        "auth_type": "bearer_token",
+        "header": "Authorization",
+        "notes": "API key directa de Moonshot. Acceso directo a modelos Kimi."
+      },
+      "multi_account": false,
+      "max_accounts": 1,
+      "rate_limit_strategy": "global",
+      "supported_models": [
+        "kimi-k2.6"
+      ],
+      "config_format": "openai_compatible",
+      "model_prefix": null,
+      "features": {
+        "streaming": true,
+        "tool_use": true,
+        "vision": false,
+        "file_upload": false
+      }
+    },
+    {
+      "id": "xiaomi",
+      "name": "Xiaomi MiMo",
+      "description": "API directa de Xiaomi para modelos MiMo",
+      "type": "direct",
+      "endpoint": "https://api.mimo.xiaomi.com/v1",
+      "auth": {
+        "method": "api_key",
+        "env_key_pattern": "XIAOMI_{N}_API_KEY",
+        "auth_type": "bearer_token",
+        "header": "Authorization",
+        "notes": "API key de Xiaomi. Soporte multi-cuenta para rotación de rate limits."
+      },
+      "multi_account": true,
+      "max_accounts": 3,
+      "rate_limit_strategy": "per_account",
+      "supported_models": [
+        "mimo-v2-omni", "mimo-v2.5-pro", "mimo-v2-flash"
+      ],
+      "config_format": "openai_compatible",
+      "model_prefix": null,
+      "features": {
+        "streaming": true,
+        "tool_use": true,
+        "vision": true,
+        "file_upload": false
+      }
+    },
+    {
+      "id": "minimax",
+      "name": "MiniMax",
+      "description": "API directa de MiniMax",
+      "type": "direct",
+      "endpoint": "https://api.minimax.chat/v1",
+      "auth": {
+        "method": "api_key",
+        "env_key_pattern": "MINIMAX_API_KEY",
+        "auth_type": "bearer_token",
+        "header": "Authorization",
+        "notes": "API key directa de MiniMax."
+      },
+      "multi_account": false,
+      "max_accounts": 1,
+      "rate_limit_strategy": "global",
+      "supported_models": [
+        "minimax-m3"
+      ],
+      "config_format": "openai_compatible",
+      "model_prefix": null,
+      "features": {
+        "streaming": true,
+        "tool_use": true,
+        "vision": false,
+        "file_upload": false
+      }
+    },
+    {
+      "id": "commandcode",
+      "name": "CommandCode IA",
+      "description": "Herramienta CLI de codificación AI tipo CommandCode",
+      "type": "platform",
+      "endpoint": null,
+      "auth": {
+        "method": "api_key",
+        "env_key_pattern": "COMMANDCODE_{N}_API_KEY",
+        "auth_type": "env_variable",
+        "notes": "Configuración vía variables de entorno. Soporte multi-cuenta."
+      },
+      "multi_account": true,
+      "max_accounts": 3,
+      "rate_limit_strategy": "per_account",
+      "supported_models": [],
+      "config_format": "commandcode",
+      "model_prefix": null,
+      "features": {
+        "streaming": true,
+        "tool_use": true,
+        "vision": false,
+        "file_upload": true
+      }
+    }
+  ]
+}

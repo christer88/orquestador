@@ -1,0 +1,386 @@
+{
+  "version": "1.0.0",
+  "description": "Catálogo de modelos AI con precios, benchmarks y fuentes disponibles",
+  "lastUpdated": "2026-06-07",
+  "tiers": {
+    "1": {
+      "label": "Flash / Económico",
+      "description": "Modelos rápidos y baratos. Ideales para tareas simples, búsqueda, exploración.",
+      "color": "#10B981",
+      "icon": "⚡",
+      "use_case": "Utilidad, búsqueda, tareas rápidas"
+    },
+    "2": {
+      "label": "Balanced / Pro",
+      "description": "Modelos balanceados entre costo y capacidad. Para implementación y revisión.",
+      "color": "#3B82F6",
+      "icon": "🔧",
+      "use_case": "Implementación, revisión, trabajadores profundos"
+    },
+    "3": {
+      "label": "Premium / Reasoning",
+      "description": "Modelos premium con razonamiento avanzado. Para orquestación y arquitectura.",
+      "color": "#8B5CF6",
+      "icon": "🧠",
+      "use_case": "Orquestación, arquitectura, planning"
+    },
+    "4": {
+      "label": "Specialized / Multimodal",
+      "description": "Modelos especializados con capacidades únicas (visión, multimodal).",
+      "color": "#EC4899",
+      "icon": "👁️",
+      "use_case": "Visual engineering, screenshot-to-code"
+    }
+  },
+  "models": [
+    {
+      "id": "kimi-k2.6",
+      "name": "Kimi K2.6",
+      "provider_origin": "moonshot",
+      "tier": 3,
+      "pricing": {
+        "input_per_million": 0.60,
+        "output_per_million": 2.50,
+        "currency": "USD"
+      },
+      "benchmarks": {
+        "swe_pro": 58.6
+      },
+      "rate_limits": {
+        "opencode_go_5hr": 1150
+      },
+      "available_sources": ["opencode-go", "openrouter", "moonshot"],
+      "context_window": 131072,
+      "supports_tools": true,
+      "supports_vision": false,
+      "openrouter_id": "moonshotai/kimi-k2.6",
+      "opencode_go_id": "kimi-k2.6"
+    },
+    {
+      "id": "deepseek-v4-flash",
+      "name": "DeepSeek V4 Flash",
+      "provider_origin": "deepseek",
+      "tier": 1,
+      "pricing": {
+        "input_per_million": 0.14,
+        "output_per_million": 0.28,
+        "currency": "USD"
+      },
+      "benchmarks": {
+        "swe_verified": 79.0
+      },
+      "rate_limits": {
+        "opencode_go_5hr": 31650
+      },
+      "available_sources": ["opencode-go", "openrouter", "deepseek-api"],
+      "context_window": 131072,
+      "supports_tools": true,
+      "supports_vision": false,
+      "openrouter_id": "deepseek/deepseek-v4-flash",
+      "opencode_go_id": "deepseek-v4-flash"
+    },
+    {
+      "id": "deepseek-v4-pro",
+      "name": "DeepSeek V4 Pro",
+      "provider_origin": "deepseek",
+      "tier": 2,
+      "pricing": {
+        "input_per_million": 1.60,
+        "output_per_million": 3.48,
+        "currency": "USD"
+      },
+      "benchmarks": {
+        "swe_pro": 55.4,
+        "live_code": 93.5
+      },
+      "rate_limits": {
+        "opencode_go_5hr": 3300
+      },
+      "available_sources": ["opencode-go", "openrouter", "deepseek-api"],
+      "context_window": 131072,
+      "supports_tools": true,
+      "supports_vision": false,
+      "openrouter_id": "deepseek/deepseek-v4-pro",
+      "opencode_go_id": "deepseek-v4-pro"
+    },
+    {
+      "id": "glm-5.1",
+      "name": "GLM 5.1",
+      "provider_origin": "zhipu",
+      "tier": 3,
+      "pricing": {
+        "input_per_million": null,
+        "output_per_million": null,
+        "currency": "USD",
+        "note": "Precio no disponible públicamente / varía por proveedor"
+      },
+      "benchmarks": {
+        "swe_pro": 58.4
+      },
+      "rate_limits": {
+        "opencode_go_5hr": 880
+      },
+      "available_sources": ["opencode-go", "openrouter"],
+      "context_window": 131072,
+      "supports_tools": true,
+      "supports_vision": false,
+      "openrouter_id": "zhipu/glm-5.1",
+      "opencode_go_id": "glm-5.1"
+    },
+    {
+      "id": "qwen3.6-plus",
+      "name": "Qwen 3.6 Plus",
+      "provider_origin": "alibaba",
+      "tier": 2,
+      "pricing": {
+        "input_per_million": null,
+        "output_per_million": null,
+        "currency": "USD",
+        "note": "Precio no disponible públicamente / varía por proveedor"
+      },
+      "benchmarks": {
+        "terminal_bench": 61.6
+      },
+      "rate_limits": {
+        "opencode_go_5hr": 3300
+      },
+      "available_sources": ["opencode-go", "openrouter"],
+      "context_window": 131072,
+      "supports_tools": true,
+      "supports_vision": false,
+      "openrouter_id": "qwen/qwen3.6-plus",
+      "opencode_go_id": "qwen3.6-plus"
+    },
+    {
+      "id": "qwen3.5-plus",
+      "name": "Qwen 3.5 Plus",
+      "provider_origin": "alibaba",
+      "tier": 1,
+      "pricing": {
+        "input_per_million": null,
+        "output_per_million": null,
+        "currency": "USD",
+        "note": "Precio no disponible públicamente / varía por proveedor"
+      },
+      "benchmarks": {},
+      "rate_limits": {
+        "opencode_go_5hr": 10000
+      },
+      "available_sources": ["opencode-go", "openrouter"],
+      "context_window": 131072,
+      "supports_tools": true,
+      "supports_vision": false,
+      "openrouter_id": "qwen/qwen3.5-plus",
+      "opencode_go_id": "qwen3.5-plus"
+    },
+    {
+      "id": "mimo-v2-omni",
+      "name": "MiMo V2 Omni",
+      "provider_origin": "xiaomi",
+      "tier": 4,
+      "pricing": {
+        "input_per_million": null,
+        "output_per_million": null,
+        "currency": "USD",
+        "note": "Modelo multimodal especializado, precio varía por proveedor"
+      },
+      "benchmarks": {},
+      "rate_limits": {},
+      "available_sources": ["opencode-go", "openrouter", "xiaomi"],
+      "context_window": 32768,
+      "supports_tools": true,
+      "supports_vision": true,
+      "openrouter_id": "xiaomi/mimo-v2-omni",
+      "opencode_go_id": "mimo-v2-omni"
+    },
+    {
+      "id": "mimo-v2.5-pro",
+      "name": "MiMo V2.5 Pro",
+      "provider_origin": "xiaomi",
+      "tier": 3,
+      "pricing": {
+        "input_per_million": 1.00,
+        "output_per_million": 3.00,
+        "currency": "USD"
+      },
+      "benchmarks": {},
+      "rate_limits": {},
+      "available_sources": ["opencode-go", "openrouter", "xiaomi"],
+      "context_window": 131072,
+      "supports_tools": true,
+      "supports_vision": false,
+      "openrouter_id": "xiaomi/mimo-v2.5-pro",
+      "opencode_go_id": "mimo-v2.5-pro"
+    },
+    {
+      "id": "mimo-v2-flash",
+      "name": "MiMo V2 Flash",
+      "provider_origin": "xiaomi",
+      "tier": 1,
+      "pricing": {
+        "input_per_million": 0.10,
+        "output_per_million": 0.30,
+        "currency": "USD"
+      },
+      "benchmarks": {},
+      "rate_limits": {},
+      "available_sources": ["openrouter", "xiaomi"],
+      "context_window": 131072,
+      "supports_tools": true,
+      "supports_vision": false,
+      "openrouter_id": "xiaomi/mimo-v2-flash"
+    },
+    {
+      "id": "minimax-m3",
+      "name": "MiniMax M3",
+      "provider_origin": "minimax",
+      "tier": 2,
+      "pricing": {
+        "input_per_million": 0.30,
+        "output_per_million": 1.20,
+        "currency": "USD"
+      },
+      "benchmarks": {},
+      "rate_limits": {},
+      "available_sources": ["openrouter", "minimax"],
+      "context_window": 131072,
+      "supports_tools": true,
+      "supports_vision": false,
+      "openrouter_id": "minimax/minimax-m3"
+    },
+    {
+      "id": "minimax-m2.5",
+      "name": "MiniMax M2.5",
+      "provider_origin": "minimax",
+      "tier": 1,
+      "pricing": {
+        "input_per_million": null,
+        "output_per_million": null,
+        "currency": "USD",
+        "note": "Precio no disponible públicamente"
+      },
+      "benchmarks": {},
+      "rate_limits": {},
+      "available_sources": ["opencode-go", "openrouter"],
+      "context_window": 131072,
+      "supports_tools": true,
+      "supports_vision": false,
+      "openrouter_id": "minimax/minimax-m2.5",
+      "opencode_go_id": "minimax-m2.5"
+    },
+    {
+      "id": "minimax-m2.7",
+      "name": "MiniMax M2.7",
+      "provider_origin": "minimax",
+      "tier": 2,
+      "pricing": {
+        "input_per_million": null,
+        "output_per_million": null,
+        "currency": "USD",
+        "note": "Precio no disponible públicamente"
+      },
+      "benchmarks": {},
+      "rate_limits": {},
+      "available_sources": ["opencode-go", "openrouter"],
+      "context_window": 131072,
+      "supports_tools": true,
+      "supports_vision": false,
+      "openrouter_id": "minimax/minimax-m2.7",
+      "opencode_go_id": "minimax-m2.7"
+    },
+    {
+      "id": "mimo-v2.5",
+      "name": "MiMo V2.5",
+      "provider_origin": "xiaomi",
+      "tier": 2,
+      "pricing": { "input_per_million": null, "output_per_million": null, "currency": "USD" },
+      "benchmarks": {},
+      "rate_limits": {},
+      "available_sources": ["openrouter", "xiaomi", "opencode-go"],
+      "context_window": 131072,
+      "supports_tools": true,
+      "supports_vision": false,
+      "openrouter_id": "xiaomi/mimo-v2.5",
+      "opencode_go_id": "mimo-v2.5"
+    },
+    {
+      "id": "mimo-v2.5-asr",
+      "name": "MiMo V2.5 ASR",
+      "provider_origin": "xiaomi",
+      "tier": 4,
+      "pricing": { "input_per_million": null, "output_per_million": null, "currency": "USD", "note": "Audio Speech Recognition" },
+      "benchmarks": {},
+      "rate_limits": {},
+      "available_sources": ["xiaomi"],
+      "context_window": 8192,
+      "supports_tools": false,
+      "supports_vision": false
+    },
+    {
+      "id": "mimo-v2.5-tts",
+      "name": "MiMo V2.5 TTS",
+      "provider_origin": "xiaomi",
+      "tier": 4,
+      "pricing": { "input_per_million": null, "output_per_million": null, "currency": "USD", "note": "Text to Speech" },
+      "benchmarks": {},
+      "rate_limits": {},
+      "available_sources": ["xiaomi"],
+      "context_window": 8192,
+      "supports_tools": false,
+      "supports_vision": false
+    },
+    {
+      "id": "mimo-v2.5-tts-voiceclone",
+      "name": "MiMo V2.5 TTS VoiceClone",
+      "provider_origin": "xiaomi",
+      "tier": 4,
+      "pricing": { "input_per_million": null, "output_per_million": null, "currency": "USD", "note": "Clonación de voz" },
+      "benchmarks": {},
+      "rate_limits": {},
+      "available_sources": ["xiaomi"],
+      "context_window": 8192,
+      "supports_tools": false,
+      "supports_vision": false
+    },
+    {
+      "id": "mimo-v2.5-tts-voicedesign",
+      "name": "MiMo V2.5 TTS VoiceDesign",
+      "provider_origin": "xiaomi",
+      "tier": 4,
+      "pricing": { "input_per_million": null, "output_per_million": null, "currency": "USD", "note": "Diseño de voz" },
+      "benchmarks": {},
+      "rate_limits": {},
+      "available_sources": ["xiaomi"],
+      "context_window": 8192,
+      "supports_tools": false,
+      "supports_vision": false
+    },
+    {
+      "id": "mimo-v2-pro",
+      "name": "MiMo V2 Pro",
+      "provider_origin": "xiaomi",
+      "tier": 3,
+      "pricing": { "input_per_million": null, "output_per_million": null, "currency": "USD" },
+      "benchmarks": {},
+      "rate_limits": {},
+      "available_sources": ["xiaomi", "openrouter"],
+      "context_window": 131072,
+      "supports_tools": true,
+      "supports_vision": false,
+      "openrouter_id": "xiaomi/mimo-v2-pro"
+    },
+    {
+      "id": "mimo-v2-tts",
+      "name": "MiMo V2 TTS",
+      "provider_origin": "xiaomi",
+      "tier": 4,
+      "pricing": { "input_per_million": null, "output_per_million": null, "currency": "USD", "note": "Text to Speech" },
+      "benchmarks": {},
+      "rate_limits": {},
+      "available_sources": ["xiaomi"],
+      "context_window": 8192,
+      "supports_tools": false,
+      "supports_vision": false
+    }
+  ]
+}

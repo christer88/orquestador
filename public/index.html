@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orquestador VibeCoding</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="icon">🚀</span>
+                <h1>VibeCoding</h1>
+            </div>
+            <nav>
+                <a href="#dashboard" class="nav-item active" data-view="dashboard">
+                    <span class="icon">📂</span> Proyectos
+                </a>
+                <a href="#wizard" class="nav-item" data-view="wizard">
+                    <span class="icon">✨</span> Nuevo Proyecto
+                </a>
+                <a href="#cost-monitor" class="nav-item" data-view="cost-monitor">
+                    <span class="icon">📊</span> Monitor Costos
+                </a>
+            </nav>
+        </aside>
+        <main class="main-content" id="app-content">
+            <!-- Vistas se inyectan aquí -->
+        </main>
+    </div>
+    
+    <div id="toast-container"></div>
+    <script type="module" src="app.js"></script>
+</body>
+</html>

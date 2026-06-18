@@ -1,0 +1,46 @@
+{
+  "id": "ejemplo-123",
+  "name": "Mi Entorno VibeCoding (Ejemplo)",
+  "description": "Proyecto de prueba con modo caché activado y dos cuentas",
+  "cacheOptimization": true,
+  "providers": [
+    "opencode-go",
+    "commandcode"
+  ],
+  "accounts": {
+    "opencode-go": [
+      {
+        "id": "opencode-go-1",
+        "label": "Cuenta OpenCode Principal",
+        "envKey": "OPENCODE_GO_1_AUTH"
+      }
+    ],
+    "commandcode": [
+      {
+        "id": "commandcode-1",
+        "label": "Cuenta CommandCode Principal",
+        "envKey": "COMMANDCODE_1_API_KEY"
+      }
+    ]
+  },
+  "agents": {
+    "sisyphus": {
+      "name": "Sisyphus",
+      "role": "Orquestador Principal",
+      "description": "El jefe de operaciones para tareas de programación complejas.",
+      "model": "kimi-k2.6",
+      "source": "opencode-go-1",
+      "fallbacks": [
+        "commandcode-1/kimi-k2.6"
+      ]
+    },
+    "librarian": {
+      "name": "Librarian",
+      "role": "Buscador de Código",
+      "description": "Explora el repositorio y encuentra funciones a la velocidad de la luz.",
+      "model": "deepseek-v4-flash",
+      "source": "opencode-go-1",
+      "fallbacks": []
+    }
+  }
+}

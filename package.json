@@ -1,0 +1,22 @@
+{
+  "name": "orquestador-vibecoding",
+  "version": "1.0.0",
+  "description": "Orquestador multi-proveedor para entornos de AI coding (OpenCode GO + Oh My OpenAgent)",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node --watch server.js",
+    "start": "node server.js",
+    "deploy": "node scripts/deploy.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "archiver": "^7.0.1",
+    "uuid": "^11.1.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

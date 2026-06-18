@@ -1,0 +1,166 @@
+{
+  "version": "1.0.0",
+  "description": "Catálogo de agentes Oh My OpenAgent para el Orquestador VibeCoding",
+  "lastUpdated": "2026-06-07",
+  "agents": [
+    {
+      "id": "sisyphus",
+      "name": "Sisyphus",
+      "icon": "⚡",
+      "role": "Main Orchestrator",
+      "category": "orchestrator",
+      "description": "Orquestador principal. Coordina todos los demás agentes. Punto de entrada para tareas complejas.",
+      "recommended_tier": 3,
+      "recommended_models": ["kimi-k2.6", "glm-5.1"],
+      "typical_requests_per_session": "50-200"
+    },
+    {
+      "id": "hephaestus",
+      "name": "Hephaestus",
+      "icon": "🔨",
+      "role": "Autonomous Deep Worker",
+      "category": "deep-worker",
+      "description": "Trabajador autónomo profundo. Implementaciones complejas multi-archivo (3-10 archivos).",
+      "recommended_tier": 2,
+      "recommended_models": ["deepseek-v4-pro", "kimi-k2.6"],
+      "typical_requests_per_session": "30-100"
+    },
+    {
+      "id": "oracle",
+      "name": "Oracle",
+      "icon": "🔮",
+      "role": "Architecture Consultant",
+      "category": "orchestrator",
+      "description": "Consultor de arquitectura. Decisiones de diseño, razonamiento largo, planning.",
+      "recommended_tier": 3,
+      "recommended_models": ["glm-5.1", "kimi-k2.6"],
+      "typical_requests_per_session": "10-30"
+    },
+    {
+      "id": "librarian",
+      "name": "Librarian",
+      "icon": "📚",
+      "role": "Codebase Search",
+      "category": "utility",
+      "description": "Búsqueda en el codebase. Velocidad > inteligencia.",
+      "recommended_tier": 1,
+      "recommended_models": ["deepseek-v4-flash", "qwen3.5-plus"],
+      "typical_requests_per_session": "20-50"
+    },
+    {
+      "id": "explore",
+      "name": "Explore",
+      "icon": "🔍",
+      "role": "Code Explorer",
+      "category": "utility",
+      "description": "Exploración de código. Búsqueda rápida sin contexto profundo.",
+      "recommended_tier": 1,
+      "recommended_models": ["deepseek-v4-flash"],
+      "typical_requests_per_session": "10-30"
+    },
+    {
+      "id": "multimodal-looker",
+      "name": "Multimodal Looker",
+      "icon": "👁️",
+      "role": "Visual Engineering",
+      "category": "specialized",
+      "description": "Screenshot-to-code y análisis visual. Diseño UI/UX.",
+      "recommended_tier": 4,
+      "recommended_models": ["mimo-v2-omni"],
+      "typical_requests_per_session": "5-15"
+    },
+    {
+      "id": "prometheus",
+      "name": "Prometheus",
+      "icon": "📋",
+      "role": "Planner",
+      "category": "orchestrator",
+      "description": "Planificador. Spec-writing, diseño arquitectónico, entrevistas de scope.",
+      "recommended_tier": 3,
+      "recommended_models": ["glm-5.1", "qwen3.6-plus"],
+      "typical_requests_per_session": "10-25"
+    },
+    {
+      "id": "metis",
+      "name": "Metis",
+      "icon": "⚖️",
+      "role": "Review Agent",
+      "category": "review",
+      "description": "Agente de revisión analítica. Code review balanceado.",
+      "recommended_tier": 2,
+      "recommended_models": ["qwen3.6-plus", "deepseek-v4-pro"],
+      "typical_requests_per_session": "10-20"
+    },
+    {
+      "id": "momus",
+      "name": "Momus",
+      "icon": "🎭",
+      "role": "Critical Reviewer",
+      "category": "review",
+      "description": "Revisor crítico. Encuentra debilidades y edge cases.",
+      "recommended_tier": 2,
+      "recommended_models": ["qwen3.6-plus", "kimi-k2.6"],
+      "typical_requests_per_session": "10-20"
+    },
+    {
+      "id": "atlas",
+      "name": "Atlas",
+      "icon": "🌍",
+      "role": "Heavy Lifter",
+      "category": "deep-worker",
+      "description": "Trabajador pesado. Tareas de terminal intensivas, automation.",
+      "recommended_tier": 2,
+      "recommended_models": ["deepseek-v4-pro", "deepseek-v4-flash"],
+      "typical_requests_per_session": "20-60"
+    },
+    {
+      "id": "code-reviewer",
+      "name": "Code Reviewer",
+      "icon": "✅",
+      "role": "Quality Gate",
+      "category": "review",
+      "description": "Revisión de calidad de código. PR reviews, best practices.",
+      "recommended_tier": 3,
+      "recommended_models": ["kimi-k2.6", "deepseek-v4-pro"],
+      "typical_requests_per_session": "10-20"
+    },
+    {
+      "id": "sisyphus-junior",
+      "name": "Sisyphus Junior",
+      "icon": "⚡",
+      "role": "Quick Tasks",
+      "category": "utility",
+      "description": "Tareas rápidas y simples. Bugs de 1-2 archivos, fixes menores.",
+      "recommended_tier": 1,
+      "recommended_models": ["deepseek-v4-flash"],
+      "typical_requests_per_session": "5-15"
+    }
+  ],
+  "categories": {
+    "orchestrator": {
+      "label": "Orquestadores",
+      "description": "Agentes que coordinan y planifican tareas",
+      "color": "#8B5CF6"
+    },
+    "deep-worker": {
+      "label": "Trabajadores Profundos",
+      "description": "Agentes para implementaciones complejas y pesadas",
+      "color": "#F59E0B"
+    },
+    "utility": {
+      "label": "Utilidad",
+      "description": "Agentes rápidos para búsqueda y tareas simples",
+      "color": "#10B981"
+    },
+    "review": {
+      "label": "Revisión",
+      "description": "Agentes de revisión y control de calidad",
+      "color": "#3B82F6"
+    },
+    "specialized": {
+      "label": "Especializados",
+      "description": "Agentes con capacidades específicas (multimodal, etc.)",
+      "color": "#EC4899"
+    }
+  }
+}
