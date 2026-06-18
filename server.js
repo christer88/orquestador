@@ -458,6 +458,60 @@ app.post('/api/projects/:id/deploy', asyncHandler(async (req, res) => {
     await fs.writeFile(rutaArchivo, contenidoStr, 'utf-8');
   }
 
+  // ─── Inyectar keys reales en opencode.json del proyecto ───────────────────
+  // OpenCode carga el opencode.json del CWD, por lo que los placeholders {env:X}
+  // deben ser reemplazados con los valores reales ANTES de que el usuario ejecute opencode.
+  try {
+    const envFilePath = path.join(targetDir, '.env');
+    const opencodeJsonPath = path.join(targetDir, 'opencode.json');
+    
+    // Parsear las variables del .env generado
+    const envContent = await fs.readFile(envFilePath, 'utf-8');
+    const envVars = {};
+    for (const line of envContent.split('\n')) {
+      const trimmed = line.trim();
+      if (trimmed && !trimmed.startsWith('#')) {
+        const eqIdx = trimmed.indexOf('=');
+        if (eqIdx !== -1) {
+          const k = trimmed.slice(0, eqIdx).trim();
+          const v = trimmed.slice(eqIdx + 1).trim();
+          envVars[k] = v;
+        }
+      }
+    }
+    
+    // Reemplazar placeholders {env:VAR} en opencode.json con los valores reales
+    let opencodeContent = await fs.readFile(opencodeJsonPath, 'utf-8');
+    let injectedCount = 0;
+    opencodeContent = opencodeContent.replace(/\{env:([A-Za-z0-9_]+)\}/g, (match, varName) => {
+      const val = envVars[varName] || process.env[varName];
+      if (val) {
+        injectedCount++;
+        return val;
+      }
+      return match; // Dejar el placeholder si no se encuentra la variable
+    });
+    await fs.writeFile(opencodeJsonPath, opencodeContent, 'utf-8');
+    console.log(`✅ Deploy: ${injectedCount} API keys inyectadas en opencode.json del proyecto`);
+
+    // También actualizar el opencode.json global (~/.config/opencode/opencode.json)
+    const globalOpencodePath = path.join(process.env.HOME || '/home/srvdes', '.config', 'opencode', 'opencode.json');
+    try {
+      let globalContent = await fs.readFile(globalOpencodePath, 'utf-8');
+      globalContent = globalContent.replace(/\{env:([A-Za-z0-9_]+)\}/g, (match, varName) => {
+        const val = envVars[varName] || process.env[varName];
+        return val || match;
+      });
+      await fs.writeFile(globalOpencodePath, globalContent, 'utf-8');
+      console.log(`✅ Deploy: opencode.json global actualizado con keys del proyecto`);
+    } catch (ge) {
+      console.warn(`⚠️ No se pudo actualizar opencode.json global: ${ge.message}`);
+    }
+  } catch (envErr) {
+    console.warn(`⚠️ No se pudo inyectar keys en opencode.json: ${envErr.message}`);
+  }
+  // ──────────────────────────────────────────────────────────────────────────
+
   // Guardar proyecto.json original en el destino
   await escribirJSON(path.join(targetDir, 'project.json'), proyecto);
 
