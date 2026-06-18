@@ -7,33 +7,13 @@ Genera todas tus `.env`, scripts de instalación y ruteos (Prompt Caching, Fallb
 ---
 
 ## 📖 Índice
-1. [Subir este proyecto a GitHub](#1-subir-este-proyecto-a-github)
-2. [Instalar el Orquestador en tu VM (Linux)](#2-instalar-el-orquestador-en-tu-vm-linux)
-3. [Cómo utilizar la Interfaz Web](#3-cómo-utilizar-la-interfaz-web)
-4. [Flujo de Trabajo (VibeCoding)](#4-flujo-de-trabajo-vibecoding)
+1. [Instalar el Orquestador en tu VM (Linux)](#2-instalar-el-orquestador-en-tu-vm-linux)
+2. [Cómo utilizar la Interfaz Web](#3-cómo-utilizar-la-interfaz-web)
+3. [Flujo de Trabajo (VibeCoding)](#4-flujo-de-trabajo-vibecoding)
 
 ---
 
-## 1. Subir este proyecto a GitHub
-
-Dado que tienes esta carpeta en tu disco local (o Google Drive), el primer paso es subirlo a un repositorio privado en GitHub para que puedas clonarlo fácilmente en cualquier servidor Linux.
-
-1. Ve a [GitHub.com](https://github.com/) y crea un nuevo repositorio llamado `orquestador-vibecoding` (hazlo **Privado** si contiene datos sensibles, aunque el archivo `.gitignore` ya excluye los archivos `.env`).
-2. Abre tu terminal (PowerShell, Bash, o Git Bash) en la carpeta de este proyecto (`g:\Mi unidad\ANTIGRAVITY - PROYECTOS\ORQUESTADOR`).
-3. Ejecuta los siguientes comandos:
-   ```bash
-   git init
-   git add .
-   git commit -m "Versión 1.0: Orquestador Inicial"
-   git branch -M main
-   git remote add origin https://github.com/TU_USUARIO/orquestador-vibecoding.git
-   git push -u origin main
-   ```
-   *(Asegúrate de cambiar `TU_USUARIO` por tu nombre de usuario real en GitHub).*
-
----
-
-## 2. Instalar el Orquestador en tu VM (Linux)
+## 1. Instalar el Orquestador en tu VM (Linux)
 
 Cuando levantes una nueva Máquina Virtual (Ubuntu o Debian), sigue estos pasos para instalar y ejecutar el Orquestador:
 
@@ -68,7 +48,7 @@ Verás en la consola que el servidor está escuchando en el puerto `3847`. Si es
 
 ---
 
-## 3. Cómo utilizar la Interfaz Web
+## 2. Cómo utilizar la Interfaz Web
 
 Una vez que el servidor esté corriendo, abre tu navegador y visita `http://localhost:3847` (o la IP de tu VM: `http://TU_IP:3847`).
 
@@ -90,7 +70,7 @@ Una vez que el servidor esté corriendo, abre tu navegador y visita `http://loca
 
 ---
 
-## 4. Flujo de Trabajo (VibeCoding)
+## 3. Flujo de Trabajo (VibeCoding)
 
 Una vez que descargues tu `.zip` del Orquestador a la carpeta de trabajo de tu nuevo proyecto:
 1. Extrae los archivos.
