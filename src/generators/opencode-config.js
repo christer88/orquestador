@@ -38,7 +38,15 @@ const PROVIDER_MODELS = {
   },
   'commandcode': {
     'deepseek-v4-pro': 'DeepSeek V4 Pro',
-    'deepseek-v4-flash': 'DeepSeek V4 Flash'
+    'deepseek-v4-flash': 'DeepSeek V4 Flash',
+    'kimi-k2.6': 'Kimi K2.6',
+    'kimi-k2.7': 'Kimi K2.7 Code',
+    'glm-5.1': 'GLM-5.1',
+    'glm-5.2': 'GLM-5.2',
+    'qwen3.6-plus': 'Qwen 3.6 Plus',
+    'qwen3.7-plus': 'Qwen 3.7 Plus',
+    'mimo-v2.5-pro': 'MiMo V2.5 Pro',
+    'minimax-m3': 'MiniMax M3'
   }
 };
 
@@ -83,6 +91,8 @@ export async function generate(projectConfig) {
         providerConfig.options.baseURL = "https://api.minimax.chat/v1";
       } else if (providerId === 'commandcode') {
         providerConfig.api = 'openai';
+        // NOTA: requiere plan Provider en commandcode.ai/billing
+        // Los IDs de modelo deben tener prefijo: deepseek/deepseek-v4-pro, moonshotai/Kimi-K2.6, etc.
         providerConfig.options.baseURL = "https://api.commandcode.ai/provider/v1";
       } else if (providerId === 'opencode-go') {
         providerConfig.api = 'openai';
@@ -112,6 +122,18 @@ export async function generate(projectConfig) {
           else if (modelId === 'mimo-v2.5-pro') realModelId = 'xiaomi/mimo-v2.5-pro';
           else if (modelId === 'mimo-v2-flash') realModelId = 'xiaomi/mimo-v2-flash';
           else if (modelId === 'minimax-m3') realModelId = 'minimax/minimax-m3';
+        } else if (providerId === 'commandcode') {
+          // CommandCode requiere IDs con prefijo del proveedor original
+          if (modelId === 'deepseek-v4-pro') realModelId = 'deepseek/deepseek-v4-pro';
+          else if (modelId === 'deepseek-v4-flash') realModelId = 'deepseek/deepseek-v4-flash';
+          else if (modelId === 'kimi-k2.6') realModelId = 'moonshotai/Kimi-K2.6';
+          else if (modelId === 'kimi-k2.7') realModelId = 'moonshotai/Kimi-K2.7-Code';
+          else if (modelId === 'glm-5.1') realModelId = 'zai-org/GLM-5.1';
+          else if (modelId === 'glm-5.2') realModelId = 'zai-org/GLM-5.2';
+          else if (modelId === 'qwen3.6-plus') realModelId = 'Qwen/Qwen3.6-Plus';
+          else if (modelId === 'qwen3.7-plus') realModelId = 'Qwen/Qwen3.7-Plus';
+          else if (modelId === 'mimo-v2.5-pro') realModelId = 'xiaomi/mimo-v2.5-pro';
+          else if (modelId === 'minimax-m3') realModelId = 'MiniMaxAI/MiniMax-M3';
         }
         
         providerConfig.models[modelId] = {
