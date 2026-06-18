@@ -127,6 +127,88 @@ async function cargarCatalogo(nombre) {
 // ═══════════════════════════════════════════════════════════════
 
 /**
+ * Resuelve las cuentas de marcador de posición (placeholder) a cuentas reales registradas.
+ */
+async function resolverProyecto(proyecto) {
+  const accountsFile = path.join(DIRS.data, 'accounts.json');
+  let registeredAccounts = [];
+  try {
+    const content = await fs.readFile(accountsFile, 'utf-8');
+    registeredAccounts = JSON.parse(content);
+  } catch (e) {
+    console.warn("⚠️ Error leyendo accounts.json:", e.message);
+  }
+
+  // Clonar para no mutar el original
+  const resuelto = JSON.parse(JSON.stringify(proyecto));
+  const placeholderMap = {};
+
+  // Mapear marcadores de posición a la cuenta limpia indexada
+  for (const providerId of resuelto.providers || []) {
+    const projAccounts = resuelto.accounts?.[providerId] || [];
+    const regAccounts = registeredAccounts.filter(a => a.provider === providerId && a.active !== false);
+
+    projAccounts.forEach((projAcc, idx) => {
+      // Intentar mapear al índice activo disponible
+      const activeIdx = idx < regAccounts.length ? idx : 0;
+      if (regAccounts.length > 0) {
+        // Mapear el ID original al ID limpio indexado (por ejemplo, xiaomi-1 -> xiaomi-1)
+        placeholderMap[projAcc.id] = `${providerId}-${activeIdx + 1}`;
+      } else {
+        // Si no hay registradas, mantener el mismo ID
+        placeholderMap[projAcc.id] = projAcc.id;
+      }
+    });
+  }
+
+  // Reemplazar la lista de cuentas del proyecto con las reales activas pero con IDs limpios
+  if (!resuelto.accounts) resuelto.accounts = {};
+  for (const providerId of resuelto.providers || []) {
+    const regAccounts = registeredAccounts.filter(a => a.provider === providerId && a.active !== false);
+    if (regAccounts.length > 0) {
+      resuelto.accounts[providerId] = regAccounts.map((a, idx) => ({
+        id: `${providerId}-${idx + 1}`,
+        label: a.label,
+        envKey: a.envKey,
+        active: a.active
+      }));
+    } else {
+      // Si no hay registradas, usar las del proyecto o por defecto
+      const projAccounts = resuelto.accounts[providerId] || [];
+      if (projAccounts.length === 0) {
+        projAccounts.push({
+          id: `${providerId}-1`,
+          label: 'Cuenta Principal',
+          envKey: `${providerId.toUpperCase().replace(/-/g, '_')}_1_API_KEY`
+        });
+      }
+      resuelto.accounts[providerId] = projAccounts;
+    }
+  }
+
+  // Reemplazar en agents
+  if (resuelto.agents) {
+    for (const [agentId, agentConfig] of Object.entries(resuelto.agents)) {
+      const src = agentConfig.source;
+      if (placeholderMap[src]) {
+        agentConfig.source = placeholderMap[src];
+      } else {
+        // Encontrar la cuenta registrada con ese UUID por si el proyecto fue guardado con UUIDs en el source
+        const regAcc = registeredAccounts.find(a => a.id === src);
+        if (regAcc) {
+          const activeRegs = registeredAccounts.filter(a => a.provider === regAcc.provider && a.active !== false);
+          const activeIdx = activeRegs.findIndex(a => a.id === regAcc.id);
+          const idxToUse = activeIdx !== -1 ? activeIdx : 0;
+          agentConfig.source = `${regAcc.provider}-${idxToUse + 1}`;
+        }
+      }
+    }
+  }
+
+  return resuelto;
+}
+
+/**
  * Importa y ejecuta los generadores de configuración para un proyecto
  * @param {object} proyecto - Datos del proyecto
  * @returns {Promise<object>} Archivos generados
@@ -135,6 +217,7 @@ async function ejecutarGeneradores(proyecto) {
   const archivosGenerados = {};
 
   try {
+    const proyectoResuelto = await resolverProyecto(proyecto);
     const configEnginePath = path.join(__dirname, 'src', 'core', 'config-engine.js');
     
     try {
@@ -149,7 +232,7 @@ async function ejecutarGeneradores(proyecto) {
     const generador = await import(pathToFileURL(configEnginePath).href);
     
     if (typeof generador.generateAllConfigs === 'function') {
-      const resultado = await generador.generateAllConfigs(proyecto);
+      const resultado = await generador.generateAllConfigs(proyectoResuelto);
       Object.assign(archivosGenerados, resultado);
     } else {
       archivosGenerados._aviso = 'El generador no exporta la función generateAllConfigs()';
@@ -344,6 +427,107 @@ app.get('/api/projects/:id/export', asyncHandler(async (req, res) => {
   await archive.finalize();
 }));
 
+/**
+ * POST /api/projects/:id/deploy — Desplegar proyecto directamente en el servidor
+ */
+app.post('/api/projects/:id/deploy', asyncHandler(async (req, res) => {
+  const proyecto = await leerJSON(path.join(DIRS.projects, `${req.params.id}.json`));
+
+  if (!proyecto) {
+    return res.status(404).json({ ok: false, error: `Proyecto '${req.params.id}' no encontrado` });
+  }
+
+  // Generar todos los archivos
+  const generados = await ejecutarGeneradores(proyecto);
+  if (generados._error) {
+    return res.status(500).json({ ok: false, error: generados._error });
+  }
+
+  // Determinar ruta de destino
+  const nombreCarpeta = `proyecto-${proyecto.name.replace(/\s+/g, '-').toLowerCase()}`;
+  const targetDir = req.body.targetDir || path.join(__dirname, nombreCarpeta);
+
+  // Asegurar que el directorio de destino existe
+  await fs.mkdir(targetDir, { recursive: true });
+
+  // Escribir los archivos generados
+  for (const [nombre, contenido] of Object.entries(generados)) {
+    if (nombre.startsWith('_')) continue;
+    const rutaArchivo = path.join(targetDir, nombre);
+    const contenidoStr = typeof contenido === 'string' ? contenido : JSON.stringify(contenido, null, 2);
+    await fs.writeFile(rutaArchivo, contenidoStr, 'utf-8');
+  }
+
+  // Guardar proyecto.json original en el destino
+  await escribirJSON(path.join(targetDir, 'project.json'), proyecto);
+
+  // Dar permisos de ejecución a los setup scripts
+  const scriptPath = path.join(targetDir, 'setup-ubuntu.sh');
+  try {
+    await fs.chmod(scriptPath, 0o755);
+  } catch (e) {
+    console.warn("⚠️ No se pudo dar permisos de ejecución a setup-ubuntu.sh:", e.message);
+  }
+
+  // Ejecutar el script setup-ubuntu.sh en segundo plano
+  const logFile = path.join(targetDir, 'deploy.log');
+  const logStream = await fs.open(logFile, 'w');
+
+  const { spawn } = await import('child_process');
+  
+  // Ejecutar en bash, pasar variables de entorno
+  const subprocess = spawn('bash', ['setup-ubuntu.sh'], {
+    cwd: targetDir,
+    detached: true,
+    stdio: ['ignore', logStream.fd, logStream.fd],
+    env: {
+      ...process.env,
+      PATH: `${process.env.PATH}:${process.env.HOME || '/home/srvdes'}/.npm-global/bin:${process.env.HOME || '/home/srvdes'}/.go/bin:${process.env.HOME || '/home/srvdes'}/.bun/bin:${process.env.HOME || '/home/srvdes'}/.opencode/bin`
+    }
+  });
+
+  // Desasociar el subproceso para que siga corriendo independientemente
+  subprocess.unref();
+  logStream.close();
+
+  res.json({
+    ok: true,
+    message: 'Despliegue e instalación iniciados con éxito en segundo plano',
+    targetDir,
+    logFile,
+  });
+}));
+
+/**
+ * GET /api/projects/:id/deploy/status — Obtener el estado y los logs del último despliegue
+ */
+app.get('/api/projects/:id/deploy/status', asyncHandler(async (req, res) => {
+  const proyecto = await leerJSON(path.join(DIRS.projects, `${req.params.id}.json`));
+  if (!proyecto) {
+    return res.status(404).json({ ok: false, error: `Proyecto '${req.params.id}' no encontrado` });
+  }
+
+  const nombreCarpeta = `proyecto-${proyecto.name.replace(/\s+/g, '-').toLowerCase()}`;
+  const targetDir = path.join(__dirname, nombreCarpeta);
+  const logFile = path.join(targetDir, 'deploy.log');
+
+  let logs = '';
+  try {
+    logs = await fs.readFile(logFile, 'utf-8');
+  } catch (e) {
+    logs = 'No hay logs de despliegue disponibles todavía.';
+  }
+
+  const terminado = logs.includes('Setup completo!') || logs.includes('Error') || logs.includes('❌');
+
+  res.json({
+    ok: true,
+    targetDir,
+    logs,
+    completed: terminado
+  });
+}));
+
 // ═══════════════════════════════════════════════════════════════
 // RUTAS: DATOS (/api/providers, /api/models, /api/agents, /api/templates)
 // ═══════════════════════════════════════════════════════════════
@@ -411,6 +595,62 @@ app.get('/api/templates/:name', asyncHandler(async (req, res) => {
   res.json({ ok: true, template: datos });
 }));
 
+/**
+ * POST /api/templates — Crear o guardar una plantilla
+ */
+app.post('/api/templates', asyncHandler(async (req, res) => {
+  await asegurarDirectorio(DIRS.templates);
+  const { name, description, providers, accounts, agents, runtime_fallback, background_task } = req.body;
+  
+  if (!name) {
+    return res.status(400).json({ ok: false, error: 'Se requiere el nombre de la plantilla' });
+  }
+  
+  const filename = `${name.toLowerCase().replace(/\s+/g, '-')}.json`;
+  const templateData = {
+    name,
+    description: description || '',
+    providers: providers || [],
+    accounts: accounts || {},
+    agents: agents || {},
+    runtime_fallback: runtime_fallback || {
+      enabled: true,
+      retry_on_errors: [400, 429, 503, 529],
+      max_fallback_attempts: 3,
+      cooldown_seconds: 60,
+      timeout_seconds: 30,
+      notify_on_fallback: true
+    },
+    background_task: background_task || {
+      defaultConcurrency: 5,
+      staleTimeoutMs: 180000
+    }
+  };
+  
+  await escribirJSON(path.join(DIRS.templates, filename), templateData);
+  res.status(201).json({ ok: true, template: templateData, filename });
+}));
+
+/**
+ * DELETE /api/templates/:filename — Eliminar una plantilla
+ */
+app.delete('/api/templates/:filename', asyncHandler(async (req, res) => {
+  let filename = req.params.filename;
+  if (!filename.endsWith('.json')) {
+    filename += '.json';
+  }
+  
+  const rutaPlantilla = path.join(DIRS.templates, filename);
+  try {
+    await fs.access(rutaPlantilla);
+  } catch {
+    return res.status(404).json({ ok: false, error: `Plantilla '${filename}' no encontrada` });
+  }
+  
+  await fs.unlink(rutaPlantilla);
+  res.json({ ok: true, message: `Plantilla '${filename}' eliminada correctamente` });
+}));
+
 // ═══════════════════════════════════════════════════════════════
 // RUTAS: CUENTAS (/api/accounts)
 // ═══════════════════════════════════════════════════════════════
@@ -440,18 +680,54 @@ app.get('/api/accounts', asyncHandler(async (req, res) => {
 }));
 
 /**
+ * Guarda una variable de entorno en el archivo .env del servidor y en memoria
+ */
+async function guardarVariableEntorno(envKey, valor) {
+  const rutaEnv = path.join(__dirname, '.env');
+  let contenido = '';
+  try {
+    contenido = await fs.readFile(rutaEnv, 'utf-8');
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+  }
+
+  const lineas = contenido.split('\n');
+  let encontrada = false;
+  for (let i = 0; i < lineas.length; i++) {
+    const l = lineas[i].trim();
+    if (l.startsWith(`${envKey}=`)) {
+      lineas[i] = `${envKey}=${valor}`;
+      encontrada = true;
+      break;
+    }
+  }
+
+  if (!encontrada) {
+    lineas.push(`${envKey}=${valor}`);
+  }
+
+  await fs.writeFile(rutaEnv, lineas.join('\n'), 'utf-8');
+  process.env[envKey] = valor;
+}
+
+/**
  * POST /api/accounts — Agregar una nueva cuenta
- * Body: { provider, label, envKey?, config? }
+ * Body: { provider, label, envKey?, apiKey?, config? }
  */
 app.post('/api/accounts', asyncHandler(async (req, res) => {
   const cuentas = await leerCuentas();
+  const { provider, label, envKey, apiKey, config } = req.body;
+
+  if (envKey && apiKey) {
+    await guardarVariableEntorno(envKey, apiKey);
+  }
 
   const nueva = {
     id: uuidv4(),
-    provider: req.body.provider || 'unknown',
-    label: req.body.label || 'Cuenta nueva',
-    envKey: req.body.envKey || null,
-    config: req.body.config || {},
+    provider: provider || 'unknown',
+    label: label || 'Cuenta nueva',
+    envKey: envKey || null,
+    config: config || {},
     active: req.body.active ?? true,
     createdAt: new Date().toISOString(),
   };
@@ -516,10 +792,9 @@ app.post('/api/accounts/:id/test', asyncHandler(async (req, res) => {
   }
 
   // Cargar catálogo de proveedores para obtener endpoint de prueba
-  const proveedores = await cargarCatalogo('providers-catalog');
-  const proveedor = Array.isArray(proveedores)
-    ? proveedores.find(p => p.id === cuenta.provider)
-    : proveedores[cuenta.provider];
+  const proveedoresCatalog = await cargarCatalogo('providers-catalog');
+  const proveedores = proveedoresCatalog.providers || [];
+  const proveedor = proveedores.find(p => p.id === cuenta.provider);
 
   if (!proveedor || !proveedor.testEndpoint) {
     return res.json({
@@ -825,7 +1100,7 @@ app.use((err, req, res, _next) => {
 /**
  * Ruta catch-all para 404 en la API
  */
-app.use('/api/*', (req, res) => {
+app.use('/api', (req, res) => {
   res.status(404).json({
     ok: false,
     error: `Ruta no encontrada: ${req.method} ${req.originalUrl}`,
@@ -904,3 +1179,4 @@ iniciarServidor().catch((error) => {
 });
 
 export default app;
+// Touch to restart watch

@@ -8,7 +8,8 @@
       "name": "OpenCode GO",
       "description": "Plataforma principal de desarrollo AI con soporte multi-modelo gratuito",
       "type": "platform",
-      "endpoint": "https://opencode.ai/api",
+      "endpoint": "https://opencode.ai/zen/go/v1",
+      "testEndpoint": "https://opencode.ai/zen/go/v1/models",
       "auth": {
         "method": "env_variable",
         "env_key_pattern": "OPENCODE_GO_{N}_AUTH",
@@ -40,6 +41,7 @@
       "description": "Agregador de modelos AI con acceso unificado a múltiples proveedores",
       "type": "aggregator",
       "endpoint": "https://openrouter.ai/api/v1",
+      "testEndpoint": "https://openrouter.ai/api/v1/auth/key",
       "auth": {
         "method": "api_key",
         "env_key_pattern": "OPENROUTER_API_KEY",
@@ -71,6 +73,7 @@
       "description": "API directa de DeepSeek para modelos V4",
       "type": "direct",
       "endpoint": "https://api.deepseek.com/v1",
+      "testEndpoint": "https://api.deepseek.com/v1/models",
       "auth": {
         "method": "api_key",
         "env_key_pattern": "DEEPSEEK_API_KEY",
@@ -99,6 +102,7 @@
       "description": "API directa de Moonshot para modelos Kimi",
       "type": "direct",
       "endpoint": "https://api.moonshot.cn/v1",
+      "testEndpoint": "https://api.moonshot.cn/v1/models",
       "auth": {
         "method": "api_key",
         "env_key_pattern": "MOONSHOT_API_KEY",
@@ -126,7 +130,8 @@
       "name": "Xiaomi MiMo",
       "description": "API directa de Xiaomi para modelos MiMo",
       "type": "direct",
-      "endpoint": "https://api.mimo.xiaomi.com/v1",
+      "endpoint": "https://api.xiaomimimo.com/v1",
+      "testEndpoint": "https://api.xiaomimimo.com/v1/models",
       "auth": {
         "method": "api_key",
         "env_key_pattern": "XIAOMI_{N}_API_KEY",

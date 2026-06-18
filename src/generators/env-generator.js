@@ -7,8 +7,9 @@ export async function generate(projectConfig) {
     env += `# Provider: ${providerId}\n`;
     for (const acc of accounts) {
       const envKey = acc.envKey || `${acc.id.toUpperCase().replace(/-/g, '_')}_API_KEY`;
+      const realValue = process.env[envKey] || 'tu_key_aqui';
       env += `# ${acc.label}\n`;
-      env += `${envKey}=tu_key_aqui\n`;
+      env += `${envKey}=${realValue}\n`;
     }
     env += `\n`;
   }

@@ -1,0 +1,11 @@
+node_modules/
+.env
+projects/
+proyecto-prueba/
+scratch/
+src/data/accounts.json
+templates/asdas.json
+*.log
+.DS_Store
+dist/
+build/

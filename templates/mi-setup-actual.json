@@ -1,30 +1,108 @@
 {
   "name": "Mi Setup Actual",
   "description": "1× OpenCode Go + 1× CommandCode + 1× Xiaomi MiMo + OpenRouter",
-  "providers": ["opencode-go", "commandcode", "xiaomi", "openrouter"],
+  "providers": [
+    "opencode-go",
+    "openrouter",
+    "xiaomi",
+    "commandcode"
+  ],
   "accounts": {
-    "opencode-go": [{ "id": "opencode-go-1", "label": "Cuenta Principal" }],
-    "commandcode": [{ "id": "commandcode-1", "label": "Cuenta Principal" }],
-    "xiaomi": [{ "id": "xiaomi-1", "label": "Cuenta Principal" }],
-    "openrouter": [{ "id": "openrouter-1", "label": "OpenRouter" }]
+    "opencode-go": [
+      {
+        "id": "opencode-go-1",
+        "label": "Cuenta Principal"
+      }
+    ],
+    "commandcode": [
+      {
+        "id": "commandcode-1",
+        "label": "Cuenta Principal"
+      }
+    ],
+    "xiaomi": [
+      {
+        "id": "xiaomi-1",
+        "label": "Cuenta Principal"
+      }
+    ],
+    "openrouter": [
+      {
+        "id": "openrouter-1",
+        "label": "OpenRouter"
+      }
+    ]
   },
   "agents": {
-    "sisyphus": { "model": "kimi-k2.6", "source": "opencode-go-1", "fallbacks": ["openrouter/moonshot/kimi-k2.6", "opencode-go-1/deepseek-v4-pro"] },
-    "hephaestus": { "model": "deepseek-v4-pro", "source": "opencode-go-1", "fallbacks": ["openrouter/deepseek/deepseek-v4-pro", "opencode-go-1/deepseek-v4-flash"] },
-    "oracle": { "model": "glm-5.1", "source": "opencode-go-1", "fallbacks": ["opencode-go-1/kimi-k2.6"] },
-    "librarian": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
-    "explore": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
-    "multimodal-looker": { "model": "mimo-v2-omni", "source": "opencode-go-1", "fallbacks": ["xiaomi-1/mimo-v2-omni"] },
-    "prometheus": { "model": "glm-5.1", "source": "opencode-go-1", "fallbacks": ["opencode-go-1/qwen3.6-plus"] },
-    "metis": { "model": "qwen3.6-plus", "source": "opencode-go-1", "fallbacks": ["opencode-go-1/deepseek-v4-pro"] },
-    "momus": { "model": "qwen3.6-plus", "source": "opencode-go-1", "fallbacks": ["opencode-go-1/kimi-k2.6"] },
-    "atlas": { "model": "deepseek-v4-pro", "source": "opencode-go-1", "fallbacks": ["opencode-go-1/deepseek-v4-flash"] },
-    "code-reviewer": { "model": "kimi-k2.6", "source": "opencode-go-1", "fallbacks": ["opencode-go-1/deepseek-v4-pro"] },
-    "sisyphus-junior": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] }
+    "sisyphus": {
+      "model": "mimo-v2.5-pro",
+      "source": "xiaomi-1",
+      "fallbacks": []
+    },
+    "hephaestus": {
+      "model": "deepseek-v4-pro",
+      "source": "e68f349f-f45f-455a-b633-5f168e330402",
+      "fallbacks": []
+    },
+    "oracle": {
+      "model": "kimi-k2.6",
+      "source": "33e1cf4a-5b9a-4f9f-abce-31136660e9a5",
+      "fallbacks": []
+    },
+    "librarian": {
+      "model": "deepseek-v4-flash",
+      "source": "e68f349f-f45f-455a-b633-5f168e330402",
+      "fallbacks": []
+    },
+    "explore": {
+      "model": "deepseek-v4-flash",
+      "source": "e68f349f-f45f-455a-b633-5f168e330402",
+      "fallbacks": []
+    },
+    "multimodal-looker": {
+      "model": "mimo-v2-omni",
+      "source": "23d34516-1d48-4375-8d77-15a010ca5879",
+      "fallbacks": []
+    },
+    "prometheus": {
+      "model": "deepseek-v4-pro",
+      "source": "33e1cf4a-5b9a-4f9f-abce-31136660e9a5",
+      "fallbacks": []
+    },
+    "metis": {
+      "model": "qwen3.6-plus",
+      "source": "33e1cf4a-5b9a-4f9f-abce-31136660e9a5",
+      "fallbacks": []
+    },
+    "momus": {
+      "model": "qwen3.6-plus",
+      "source": "33e1cf4a-5b9a-4f9f-abce-31136660e9a5",
+      "fallbacks": []
+    },
+    "atlas": {
+      "model": "deepseek-v4-pro",
+      "source": "e68f349f-f45f-455a-b633-5f168e330402",
+      "fallbacks": []
+    },
+    "code-reviewer": {
+      "model": "kimi-k2.6",
+      "source": "33e1cf4a-5b9a-4f9f-abce-31136660e9a5",
+      "fallbacks": []
+    },
+    "sisyphus-junior": {
+      "model": "deepseek-v4-flash",
+      "source": "e68f349f-f45f-455a-b633-5f168e330402",
+      "fallbacks": []
+    }
   },
   "runtime_fallback": {
     "enabled": true,
-    "retry_on_errors": [400, 429, 503, 529],
+    "retry_on_errors": [
+      400,
+      429,
+      503,
+      529
+    ],
     "max_fallback_attempts": 3,
     "cooldown_seconds": 60,
     "timeout_seconds": 30,

@@ -12,19 +12,25 @@
 <body>
     <div class="app-layout">
         <aside class="sidebar">
-            <div class="logo">
-                <span class="icon">🚀</span>
-                <h1>VibeCoding</h1>
+            <div class="sidebar__logo">
+                <div class="sidebar__logo-icon">🚀</div>
+                <div class="sidebar__logo-text">VibeCoding</div>
             </div>
-            <nav>
-                <a href="#dashboard" class="nav-item active" data-view="dashboard">
-                    <span class="icon">📂</span> Proyectos
+            <nav class="sidebar__nav">
+                <a href="#dashboard" class="sidebar__nav-item sidebar__nav-item--active" data-view="dashboard">
+                    <span class="icon sidebar__nav-icon">📂</span> Proyectos
                 </a>
-                <a href="#wizard" class="nav-item" data-view="wizard">
-                    <span class="icon">✨</span> Nuevo Proyecto
+                <a href="#wizard" class="sidebar__nav-item" data-view="wizard">
+                    <span class="icon sidebar__nav-icon">✨</span> Nuevo Proyecto
                 </a>
-                <a href="#cost-monitor" class="nav-item" data-view="cost-monitor">
-                    <span class="icon">📊</span> Monitor Costos
+                <a href="#cost-monitor" class="sidebar__nav-item" data-view="cost-monitor">
+                    <span class="icon sidebar__nav-icon">📊</span> Monitor Costos
+                </a>
+                <a href="#accounts" class="sidebar__nav-item" data-view="accounts">
+                    <span class="icon sidebar__nav-icon">🔑</span> Cuentas y Claves
+                </a>
+                <a href="#templates" class="sidebar__nav-item" data-view="templates">
+                    <span class="icon sidebar__nav-icon">📋</span> Plantillas
                 </a>
             </nav>
         </aside>

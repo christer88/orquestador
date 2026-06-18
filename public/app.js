@@ -44,13 +44,28 @@ async function loadData() {
 }
 
 function handleRoute() {
-  const hash = window.location.hash || '#dashboard';
+  const fullHash = window.location.hash || '#dashboard';
+  const [hash, queryString] = fullHash.split('?');
   const content = document.getElementById('app-content');
-  const navItems = document.querySelectorAll('.nav-item');
+  const navItems = document.querySelectorAll('.sidebar__nav-item');
+  
+  // Parse query params
+  const params = {};
+  if (queryString) {
+    queryString.split('&').forEach(pair => {
+      const [key, val] = pair.split('=');
+      params[decodeURIComponent(key)] = decodeURIComponent(val || '');
+    });
+  }
+  
+  window.currentRouteParams = params;
   
   navItems.forEach(nav => {
-    if (nav.getAttribute('href') === hash) nav.classList.add('active');
-    else nav.classList.remove('active');
+    if (nav.getAttribute('href') === hash) {
+      nav.classList.add('sidebar__nav-item--active');
+    } else {
+      nav.classList.remove('sidebar__nav-item--active');
+    }
   });
   
   // Render views
@@ -60,6 +75,10 @@ function handleRoute() {
     import('./components/wizard/wizard-container.js').then(m => m.default.render(content));
   } else if (hash === '#cost-monitor') {
     import('./components/cost-monitor.js').then(m => m.default.render(content));
+  } else if (hash === '#accounts') {
+    import('./components/account-manager-ui.js').then(m => m.default.render(content));
+  } else if (hash === '#templates') {
+    import('./components/templates-ui.js').then(m => m.default.render(content));
   } else {
     content.innerHTML = `<h2>Vista no encontrada</h2>`;
   }
