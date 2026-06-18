@@ -9,3 +9,4 @@ templates/asdas.json
 .DS_Store
 dist/
 build/
+proyecto-*/

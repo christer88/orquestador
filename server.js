@@ -682,6 +682,35 @@ app.post('/api/templates', asyncHandler(async (req, res) => {
   };
   
   await escribirJSON(path.join(DIRS.templates, filename), templateData);
+
+  // Sincronizar cambios a los proyectos existentes que usan esta plantilla
+  try {
+    const archivosProyectos = await fs.readdir(DIRS.projects);
+    let proyectosActualizados = 0;
+    
+    for (const archivo of archivosProyectos) {
+      if (!archivo.endsWith('.json')) continue;
+      const rutaProyecto = path.join(DIRS.projects, archivo);
+      const proyecto = await leerJSON(rutaProyecto);
+      
+      // Si el proyecto usa esta plantilla, sincronizamos sus configuraciones
+      if (proyecto && proyecto.template === name) {
+        proyecto.providers = providers || [];
+        proyecto.accounts = accounts || {};
+        proyecto.agents = agents || {};
+        // Opcionalmente actualizar runtime_fallback y background_task si no se personalizaron
+        proyecto.runtime_fallback = templateData.runtime_fallback;
+        proyecto.background_task = templateData.background_task;
+        
+        await escribirJSON(rutaProyecto, proyecto);
+        proyectosActualizados++;
+      }
+    }
+    console.log(`✅ Plantilla '${name}' guardada. Se actualizaron ${proyectosActualizados} proyectos asociados.`);
+  } catch (error) {
+    console.error(`⚠️ Error al sincronizar proyectos con la plantilla '${name}':`, error);
+  }
+
   res.status(201).json({ ok: true, template: templateData, filename });
 }));
 
