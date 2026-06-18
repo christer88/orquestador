@@ -24,7 +24,7 @@ Ingresa a tu máquina virtual por SSH y clona tu repositorio:
 sudo apt update && sudo apt install -y git curl
 
 # Clona tu proyecto (te pedirá tu token de GitHub si es privado)
-git clone https://github.com/TU_USUARIO/orquestador-vibecoding.git
+git clone https://github.com/christer88/orquestador.git
 cd orquestador-vibecoding
 ```
 
