@@ -70,6 +70,21 @@ if [ -f .env ]; then
   cp .env ~/.config/opencode/.env
   set -a && source .env && set +a
   echo "✅ Variables de entorno cargadas"
+  
+  # Reemplazar marcadores {env:VAR} con llaves reales localmente para evitar problemas de sesión/PATH
+  node -e '
+    const fs = require("fs");
+    const path = require("path");
+    const configFile = path.join(process.env.HOME || "/home/srvdes", ".config/opencode/opencode.json");
+    if (fs.existsSync(configFile)) {
+      let content = fs.readFileSync(configFile, "utf8");
+      content = content.replace(/\\{env:([A-Za-z0-9_]+)\\}/g, (match, p1) => {
+        return process.env[p1] || match;
+      });
+      fs.writeFileSync(configFile, content, "utf8");
+      console.log("✅ Llaves de API inyectadas localmente en opencode.json");
+    }
+  '
 else
   echo "⚠️  No se encontró .env — crea uno con tus API keys"
 fi

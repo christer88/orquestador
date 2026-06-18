@@ -44,7 +44,7 @@ const PROVIDER_MODELS = {
 
 export async function generate(projectConfig) {
   const config = {
-    plugin: ["oh-my-openagent@latest"],
+    plugin: [],
     $schema: "https://opencode.ai/config.json",
     model: "deepseek-v4-flash", // Modelo default barato
     provider: {},
