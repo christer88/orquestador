@@ -445,7 +445,7 @@ app.post('/api/projects/:id/deploy', asyncHandler(async (req, res) => {
 
   // Determinar ruta de destino
   const nombreCarpeta = `proyecto-${proyecto.name.replace(/\s+/g, '-').toLowerCase()}`;
-  const targetDir = req.body.targetDir || path.join(__dirname, nombreCarpeta);
+  const targetDir = (req.body && req.body.targetDir) || path.join(__dirname, nombreCarpeta);
 
   // Asegurar que el directorio de destino existe
   await fs.mkdir(targetDir, { recursive: true });
