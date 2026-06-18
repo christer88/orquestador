@@ -18,6 +18,11 @@ if ! grep -q "npm-global" ~/.bashrc; then
   echo "✅ Rutas agregadas a ~/.bashrc para persistencia"
 fi
 
+if ! grep -q "opencode/.env" ~/.bashrc; then
+  echo 'if [ -f ~/.config/opencode/.env ]; then set -a && source ~/.config/opencode/.env && set +a; fi' >> ~/.bashrc
+  echo "✅ Carga automática de llaves agregada a ~/.bashrc"
+fi
+
 # 3. Prerequisitos
 # Intentar instalar herramientas de sistema usando sudo -n (no interactivo) por si acaso, sin fallar si requiere clave
 sudo -n apt update && sudo -n apt install -y curl git build-essential || echo "⚠️  No se pudo usar apt con sudo (se asume que curl, git ya existen)"
@@ -57,7 +62,7 @@ bunx oh-my-opencode install --no-tui --claude=no --gemini=no --copilot=no --open
 echo "⚙️  Configurando archivos del proyecto..."
 mkdir -p ~/.config/opencode
 rm -f ~/.config/opencode/opencode.json
-cp opencode.jsonc ~/.config/opencode/opencode.jsonc
+cp opencode.json ~/.config/opencode/opencode.json
 cp oh-my-openagent.json ~/.config/opencode/oh-my-openagent.json
 
 # 6. Variables de entorno

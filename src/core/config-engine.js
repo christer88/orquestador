@@ -19,7 +19,7 @@ export async function generateAllConfigs(projectConfig) {
 
   const results = {
     'oh-my-openagent.json': await omoGen.generate(projectConfig),
-    'opencode.jsonc': await opencodeGen.generate(projectConfig),
+    'opencode.json': await opencodeGen.generate(projectConfig),
     '.env': await envGen.generate(projectConfig),
     'AGENTS-README.md': await readmeGen.generate(projectConfig),
     'setup-ubuntu.sh': await setupGen.generateUbuntu(projectConfig),
