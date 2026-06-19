@@ -1304,94 +1304,54 @@ a:hover {
   background: rgba(99, 102, 241, 0.05);
 }
 
-/* ─── Dashboard de Costos ─── */
-.cost-dashboard {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: var(--space-6);
-}
-
-.cost-card {
-  background: rgba(var(--bg-card-rgb), 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-6);
-}
-
-.cost-card__value {
-  font-size: var(--text-3xl);
+/* ─── Visor de Ayuda Markdown ─── */
+.help-markdown-body h1 {
+  font-size: var(--text-2xl);
   font-weight: 700;
-  font-family: var(--font-code);
-  margin-bottom: var(--space-1);
+  margin-top: 0;
+  margin-bottom: var(--space-4);
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: var(--space-2);
 }
 
-.cost-card__label {
+.help-markdown-body h2 {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-3);
+  color: var(--text-primary);
+}
+
+.help-markdown-body h3 {
+  font-size: var(--text-base);
+  font-weight: 600;
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-2);
+  color: var(--primary-start);
+}
+
+.help-markdown-body p {
   font-size: var(--text-sm);
   color: var(--text-secondary);
+  margin-bottom: var(--space-4);
+  line-height: 1.6;
 }
 
-.cost-card__change {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  font-size: var(--text-xs);
-  margin-top: var(--space-2);
-  padding: 2px var(--space-2);
-  border-radius: var(--radius-full);
+.help-markdown-body ul {
+  margin-bottom: var(--space-4);
+  padding-left: var(--space-6);
+  list-style-type: disc;
 }
 
-.cost-card__change--up {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--error);
-}
-
-.cost-card__change--down {
-  background: rgba(34, 197, 94, 0.1);
-  color: var(--success);
-}
-
-/* Barras de costo */
-.cost-bar {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.cost-bar__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.cost-bar__label {
+.help-markdown-body li {
   font-size: var(--text-sm);
-  color: var(--text-primary);
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
 }
 
-.cost-bar__value {
-  font-size: var(--text-sm);
-  font-weight: 600;
-  font-family: var(--font-code);
-  color: var(--text-primary);
-}
-
-.cost-bar__track {
-  height: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: var(--radius-full);
-  overflow: hidden;
-}
-
-.cost-bar__fill {
-  height: 100%;
-  border-radius: var(--radius-full);
-  transition: width 0.8s ease-out;
-  animation: progressFill 1s ease-out;
+.help-markdown-body pre {
+  margin-bottom: var(--space-4);
 }
 
 /* ─── Account Switcher ─── */
@@ -2299,10 +2259,6 @@ a:hover {
 
   .wizard__step-label {
     display: none;
-  }
-
-  .cost-dashboard {
-    grid-template-columns: 1fr;
   }
 
   .modal {

@@ -63,6 +63,7 @@ export async function generate(projectConfig) {
     // Plugin de agentes Oh My OpenAgent — necesario para cargar agentes y herramientas
     plugin: ["oh-my-openagent"],
     model: "deepseek-v4-flash", // Modelo default barato
+    permission: "allow",
     provider: {},
     theme: "opencode",
     autoupdate: true

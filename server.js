@@ -301,15 +301,23 @@ app.post('/api/projects', asyncHandler(async (req, res) => {
   const id = uuidv4();
   const ahora = new Date().toISOString();
 
+  // Si se especifica una plantilla, cargar sus datos automáticamente
+  let templateData = null;
+  if (req.body.template) {
+    const templateFilename = `${req.body.template.toLowerCase().replace(/\s+/g, '-')}.json`;
+    templateData = await leerJSON(path.join(DIRS.templates, templateFilename));
+  }
+
   const proyecto = {
     id,
     name: req.body.name || 'Proyecto sin nombre',
     description: req.body.description || '',
     template: req.body.template || null,
-    providers: req.body.providers || [],
-    accounts: req.body.accounts || {},
-    agents: req.body.agents || {},
-    runtime_fallback: req.body.runtime_fallback || {
+    // Usar datos del body si existen, si no usar los de la plantilla, si no usar defaults
+    providers: req.body.providers?.length ? req.body.providers : (templateData?.providers || []),
+    accounts: (req.body.accounts && Object.keys(req.body.accounts).length) ? req.body.accounts : (templateData?.accounts || {}),
+    agents: (req.body.agents && Object.keys(req.body.agents).length) ? req.body.agents : (templateData?.agents || {}),
+    runtime_fallback: req.body.runtime_fallback || templateData?.runtime_fallback || {
       enabled: true,
       retry_on_errors: [400, 429, 503, 529],
       max_fallback_attempts: 3,
@@ -317,7 +325,7 @@ app.post('/api/projects', asyncHandler(async (req, res) => {
       timeout_seconds: 30,
       notify_on_fallback: true,
     },
-    background_task: req.body.background_task || {
+    background_task: req.body.background_task || templateData?.background_task || {
       defaultConcurrency: 5,
       staleTimeoutMs: 180000,
     },
@@ -353,7 +361,17 @@ app.put('/api/projects/:id', asyncHandler(async (req, res) => {
   };
 
   await escribirJSON(rutaProyecto, actualizado);
-  res.json({ ok: true, project: actualizado });
+
+  // Regenerar archivos de configuración automáticamente
+  try {
+    const archivosGenerados = await ejecutarGeneradores(actualizado);
+    const archivosOk = Object.keys(archivosGenerados).filter(k => !k.startsWith('_'));
+    console.log(`♻️  Proyecto '${actualizado.name}' actualizado y configs regeneradas: ${archivosOk.join(', ')}`);
+    res.json({ ok: true, project: actualizado, generated: archivosOk });
+  } catch (genErr) {
+    console.error(`⚠️  Error regenerando configs para '${actualizado.name}':`, genErr.message);
+    res.json({ ok: true, project: actualizado });
+  }
 }));
 
 /**
@@ -508,13 +526,9 @@ app.post('/api/projects/:id/deploy', asyncHandler(async (req, res) => {
     // También actualizar el opencode.json global (~/.config/opencode/opencode.json)
     const globalOpencodePath = path.join(process.env.HOME || '/home/srvdes', '.config', 'opencode', 'opencode.json');
     try {
-      let globalContent = await fs.readFile(globalOpencodePath, 'utf-8');
-      globalContent = globalContent.replace(/\{env:([A-Za-z0-9_]+)\}/g, (match, varName) => {
-        const val = envVars[varName] || process.env[varName];
-        return val || match;
-      });
-      await fs.writeFile(globalOpencodePath, globalContent, 'utf-8');
-      console.log(`✅ Deploy: opencode.json global actualizado con keys del proyecto`);
+      await fs.mkdir(path.dirname(globalOpencodePath), { recursive: true });
+      await fs.writeFile(globalOpencodePath, opencodeContent, 'utf-8');
+      console.log(`✅ Deploy: opencode.json global actualizado con el opencode.json del proyecto`);
     } catch (ge) {
       console.warn(`⚠️ No se pudo actualizar opencode.json global: ${ge.message}`);
     }
@@ -610,21 +624,24 @@ app.post('/api/projects/:id/update', asyncHandler(async (req, res) => {
   }
 
   // Determinar ruta de destino
-  const nombreCarpeta = `proyecto-${proyecto.name.replace(/\\s+/g, '-').toLowerCase()}`;
+  const nombreCarpeta = `proyecto-${proyecto.name.replace(/\s+/g, '-').toLowerCase()}`;
   const targetDir = (req.body && req.body.targetDir) || path.join(__dirname, nombreCarpeta);
 
   // Asegurar que el directorio de destino existe
   await fs.mkdir(targetDir, { recursive: true });
 
   // Escribir los archivos generados
+  const archivosActualizados = [];
   for (const [nombre, contenido] of Object.entries(generados)) {
     if (nombre.startsWith('_')) continue;
     const rutaArchivo = path.join(targetDir, nombre);
     const contenidoStr = typeof contenido === 'string' ? contenido : JSON.stringify(contenido, null, 2);
     await fs.writeFile(rutaArchivo, contenidoStr, 'utf-8');
+    archivosActualizados.push(nombre);
   }
 
   // ─── Inyectar keys reales en opencode.json del proyecto ───────────────────
+  let keysInyectadas = 0;
   try {
     const envFilePath = path.join(targetDir, '.env');
     const opencodeJsonPath = path.join(targetDir, 'opencode.json');
@@ -633,7 +650,7 @@ app.post('/api/projects/:id/update', asyncHandler(async (req, res) => {
     let envVars = {};
     try {
       const envContent = await fs.readFile(envFilePath, 'utf-8');
-      for (const line of envContent.split('\\n')) {
+      for (const line of envContent.split('\n')) {
         const trimmed = line.trim();
         if (trimmed && !trimmed.startsWith('#')) {
           const eqIdx = trimmed.indexOf('=');
@@ -650,32 +667,27 @@ app.post('/api/projects/:id/update', asyncHandler(async (req, res) => {
     
     try {
       let opencodeContent = await fs.readFile(opencodeJsonPath, 'utf-8');
-      let injectedCount = 0;
-      opencodeContent = opencodeContent.replace(/\\{env:([A-Za-z0-9_]+)\\}/g, (match, varName) => {
+      opencodeContent = opencodeContent.replace(/\{env:([A-Za-z0-9_]+)\}/g, (match, varName) => {
         const val = envVars[varName] || process.env[varName];
         if (val) {
-          injectedCount++;
+          keysInyectadas++;
           return val;
         }
         return match;
       });
       await fs.writeFile(opencodeJsonPath, opencodeContent, 'utf-8');
-      console.log(`✅ Update: ${injectedCount} API keys inyectadas en opencode.json del proyecto`);
+      console.log(`✅ Update: ${keysInyectadas} API keys inyectadas en opencode.json del proyecto`);
+
+      const globalOpencodePath = path.join(process.env.HOME || '/home/srvdes', '.config', 'opencode', 'opencode.json');
+      try {
+        await fs.mkdir(path.dirname(globalOpencodePath), { recursive: true });
+        await fs.writeFile(globalOpencodePath, opencodeContent, 'utf-8');
+        console.log(`✅ Update: opencode.json global actualizado con el opencode.json del proyecto`);
+      } catch (ge) {
+        console.warn(`⚠️ No se pudo actualizar opencode.json global: ${ge.message}`);
+      }
     } catch (e) {
       console.warn("No se encontró opencode.json durante update", e.message);
-    }
-
-    const globalOpencodePath = path.join(process.env.HOME || '/home/srvdes', '.config', 'opencode', 'opencode.json');
-    try {
-      let globalContent = await fs.readFile(globalOpencodePath, 'utf-8');
-      globalContent = globalContent.replace(/\\{env:([A-Za-z0-9_]+)\\}/g, (match, varName) => {
-        const val = envVars[varName] || process.env[varName];
-        return val || match;
-      });
-      await fs.writeFile(globalOpencodePath, globalContent, 'utf-8');
-      console.log(`✅ Update: opencode.json global actualizado con keys del proyecto`);
-    } catch (ge) {
-      console.warn(`⚠️ No se pudo actualizar opencode.json global: ${ge.message}`);
     }
   } catch (envErr) {
     console.warn(`⚠️ Error inyectando keys: ${envErr.message}`);
@@ -688,7 +700,9 @@ app.post('/api/projects/:id/update', asyncHandler(async (req, res) => {
   res.json({
     ok: true,
     message: 'Archivos de configuración actualizados con éxito',
-    targetDir
+    targetDir,
+    archivos: archivosActualizados,
+    keysInyectadas
   });
 }));
 
@@ -937,9 +951,18 @@ app.post('/api/templates', asyncHandler(async (req, res) => {
         // Opcionalmente actualizar runtime_fallback y background_task si no se personalizaron
         proyecto.runtime_fallback = templateData.runtime_fallback;
         proyecto.background_task = templateData.background_task;
+        proyecto.updatedAt = new Date().toISOString();
         
         await escribirJSON(rutaProyecto, proyecto);
         proyectosActualizados++;
+
+        // Regenerar archivos de configuración para que los cambios se apliquen de inmediato
+        try {
+          const archivosGenerados = await ejecutarGeneradores(proyecto);
+          console.log(`  ♻️  Configs regeneradas para proyecto '${proyecto.name}':`, Object.keys(archivosGenerados).filter(k => !k.startsWith('_')).join(', '));
+        } catch (genErr) {
+          console.error(`  ⚠️  Error regenerando configs para '${proyecto.name}':`, genErr.message);
+        }
       }
     }
     console.log(`✅ Plantilla '${name}' guardada. Se actualizaron ${proyectosActualizados} proyectos asociados.`);
@@ -1202,108 +1225,61 @@ app.put('/api/accounts/switch', asyncHandler(async (req, res) => {
 }));
 
 // ═══════════════════════════════════════════════════════════════
-// RUTAS: COSTOS (/api/costs)
+// RUTAS: AYUDA (/api/help)
 // ═══════════════════════════════════════════════════════════════
 
 /**
- * GET /api/costs/summary — Resumen de costos del proyecto actual
- * Query: ?projectId=<uuid>
+ * GET /api/help/system-readme — Obtener el README general del sistema
  */
-app.get('/api/costs/summary', asyncHandler(async (req, res) => {
-  const { projectId } = req.query;
-
-  if (!projectId) {
-    return res.status(400).json({ ok: false, error: 'Se requiere query param projectId' });
+app.get('/api/help/system-readme', asyncHandler(async (req, res) => {
+  try {
+    const readmePath = path.join(__dirname, 'README.md');
+    const content = await fs.readFile(readmePath, 'utf-8');
+    res.json({ ok: true, content });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: `Error leyendo el README general: ${err.message}` });
   }
-
-  const proyecto = await leerJSON(path.join(DIRS.projects, `${projectId}.json`));
-
-  if (!proyecto) {
-    return res.status(404).json({ ok: false, error: `Proyecto '${projectId}' no encontrado` });
-  }
-
-  // Cargar catálogo de modelos para obtener precios
-  const modelos = await cargarCatalogo('models-catalog');
-  const catalogoModelos = Array.isArray(modelos)
-    ? Object.fromEntries(modelos.map(m => [m.id, m]))
-    : modelos;
-
-  // Calcular resumen de costos por agente
-  const agentes = proyecto.agents || {};
-  const resumen = {
-    projectId,
-    projectName: proyecto.name,
-    agents: {},
-    totalMonthlyEstimate: 0,
-  };
-
-  for (const [nombreAgente, config] of Object.entries(agentes)) {
-    const modelo = catalogoModelos[config.model];
-    const costoInput = modelo?.pricing?.input || 0;   // Costo por 1M tokens de entrada
-    const costoOutput = modelo?.pricing?.output || 0;  // Costo por 1M tokens de salida
-
-    resumen.agents[nombreAgente] = {
-      model: config.model,
-      source: config.source,
-      pricing: {
-        inputPer1M: costoInput,
-        outputPer1M: costoOutput,
-      },
-    };
-  }
-
-  res.json({ ok: true, summary: resumen });
 }));
 
 /**
- * GET /api/costs/estimate — Estimar costo de una sesión
- * Query: ?hours=X&intensity=Y (low|medium|high)
+ * GET /api/help/agents-readme — Obtener el README de agentes (dinámico para un proyecto)
  */
-app.get('/api/costs/estimate', asyncHandler(async (req, res) => {
-  const horas = parseFloat(req.query.hours) || 1;
-  const intensidad = req.query.intensity || 'medium';
+app.get('/api/help/agents-readme', asyncHandler(async (req, res) => {
+  try {
+    const { projectId } = req.query;
+    let content = '';
 
-  // Tokens estimados por hora según intensidad de uso
-  const tokensPerHour = {
-    low: { input: 50000, output: 15000 },
-    medium: { input: 150000, output: 50000 },
-    high: { input: 400000, output: 150000 },
-  };
+    if (projectId) {
+      const proyecto = await leerJSON(path.join(DIRS.projects, `${projectId}.json`));
+      if (proyecto) {
+        const readmeGen = await import('./src/generators/readme-generator.js');
+        content = await readmeGen.generate(proyecto);
+      }
+    }
 
-  const perfil = tokensPerHour[intensidad] || tokensPerHour.medium;
+    // Fallback si no hay proyecto o no se pudo generar
+    if (!content) {
+      const proyectos = await fs.readdir(DIRS.projects);
+      for (const p of proyectos) {
+        if (p.endsWith('.json')) {
+          const proyecto = await leerJSON(path.join(DIRS.projects, p));
+          if (proyecto) {
+            const readmeGen = await import('./src/generators/readme-generator.js');
+            content = await readmeGen.generate(proyecto);
+            break;
+          }
+        }
+      }
+    }
 
-  // Cargar modelos para precios de referencia
-  const modelos = await cargarCatalogo('models-catalog');
-  const listaModelos = Array.isArray(modelos) ? modelos : Object.values(modelos);
+    if (!content) {
+      content = `# 🤖 Guía de Agentes\n\nNo hay proyectos creados aún. Crea un proyecto nuevo para ver la lista detallada y configuración de tus agentes.`;
+    }
 
-  // Calcular estimación por modelo
-  const estimaciones = listaModelos.map(modelo => {
-    const precioInput = modelo.pricing?.input || 0;
-    const precioOutput = modelo.pricing?.output || 0;
-
-    // Costo = (tokens * precio_por_1M) / 1_000_000 * horas
-    const costoInput = (perfil.input * precioInput / 1_000_000) * horas;
-    const costoOutput = (perfil.output * precioOutput / 1_000_000) * horas;
-
-    return {
-      model: modelo.id || modelo.name,
-      costPerSession: Math.round((costoInput + costoOutput) * 10000) / 10000,
-      breakdown: {
-        input: Math.round(costoInput * 10000) / 10000,
-        output: Math.round(costoOutput * 10000) / 10000,
-      },
-    };
-  });
-
-  res.json({
-    ok: true,
-    estimate: {
-      hours: horas,
-      intensity: intensidad,
-      tokensPerHour: perfil,
-      models: estimaciones,
-    },
-  });
+    res.json({ ok: true, content });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: `Error generando/leyendo el README de agentes: ${err.message}` });
+  }
 }));
 
 // ═══════════════════════════════════════════════════════════════
@@ -1477,9 +1453,9 @@ async function iniciarServidor() {
     console.log('    POST   /api/accounts/:id/test');
     console.log('    PUT    /api/accounts/switch');
     console.log('');
-    console.log('  COSTOS:');
-    console.log('    GET    /api/costs/summary?projectId=<uuid>');
-    console.log('    GET    /api/costs/estimate?hours=X&intensity=Y');
+    console.log('  AYUDA:');
+    console.log('    GET    /api/help/system-readme');
+    console.log('    GET    /api/help/agents-readme?projectId=<uuid>');
     console.log('');
     console.log('  AGENTES PERSONALIZADOS:');
     console.log('    GET    /api/custom-agents');

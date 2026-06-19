@@ -73,8 +73,8 @@ function handleRoute() {
     import('./components/dashboard.js').then(m => m.default.render(content));
   } else if (hash === '#wizard') {
     import('./components/wizard/wizard-container.js').then(m => m.default.render(content));
-  } else if (hash === '#cost-monitor') {
-    import('./components/cost-monitor.js').then(m => m.default.render(content));
+  } else if (hash === '#help') {
+    import('./components/help.js').then(m => m.default.render(content));
   } else if (hash === '#accounts') {
     import('./components/account-manager-ui.js').then(m => m.default.render(content));
   } else if (hash === '#templates') {

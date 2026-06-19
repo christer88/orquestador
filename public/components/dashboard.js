@@ -140,7 +140,7 @@ window.updateProject = async function(id) {
       </div>
       <div class="modal__body" style="padding: var(--space-6) var(--space-4);">
         <div id="update-message" class="text-info" style="display: flex; align-items: center; gap: 8px;">
-          <span class="loading-spinner"></span> Actualizando configuraciones...
+          <span class="loading-spinner"></span> Regenerando configuraciones y aplicando cambios...
         </div>
       </div>
       <div class="modal__footer">
@@ -158,12 +158,22 @@ window.updateProject = async function(id) {
       return;
     }
 
+    const archivos = (data.archivos || []).map(f => `<code style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:3px;">${f}</code>`).join(', ');
+    const keysInfo = data.keysInyectadas > 0 ? `<br><span style="color: var(--success);">🔑 ${data.keysInyectadas} API keys inyectadas correctamente</span>` : '';
+
     document.getElementById('update-message').innerHTML = `
-      <span class="badge badge--success">Completado ✨</span> 
-      <br><br>
-      Configuración actualizada en: <code style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">${data.targetDir}</code>
+      <div>
+        <span class="badge badge--success">✅ Completado</span>
+        <br><br>
+        <div style="font-size: var(--text-sm); color: var(--text-secondary);">
+          📁 Carpeta: <code style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:3px;">${data.targetDir}</code>
+        </div>
+        ${archivos ? `<div style="margin-top: 8px; font-size: var(--text-xs); color: var(--text-secondary);">📄 Archivos actualizados: ${archivos}</div>` : ''}
+        ${keysInfo}
+      </div>
     `;
   } catch (e) {
     document.getElementById('update-message').innerHTML = `❌ Error de red: ${e.message}`;
   }
 };
+

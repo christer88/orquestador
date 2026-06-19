@@ -36,7 +36,7 @@
   "agents": {
     "sisyphus": {
       "model": "mimo-v2.5-pro",
-      "source": "xiaomi-1",
+      "source": "23d34516-1d48-4375-8d77-15a010ca5879",
       "fallbacks": []
     },
     "hephaestus": {
@@ -51,17 +51,17 @@
     },
     "oracle": {
       "model": "kimi-k2.6",
-      "source": "33e1cf4a-5b9a-4f9f-abce-31136660e9a5",
+      "source": "5922668d-5270-4d8b-aa35-7ced4104145a",
       "fallbacks": []
     },
     "librarian": {
       "model": "deepseek-v4-flash",
-      "source": "33e1cf4a-5b9a-4f9f-abce-31136660e9a5",
+      "source": "5922668d-5270-4d8b-aa35-7ced4104145a",
       "fallbacks": []
     },
     "explore": {
       "model": "deepseek-v4-flash",
-      "source": "33e1cf4a-5b9a-4f9f-abce-31136660e9a5",
+      "source": "5922668d-5270-4d8b-aa35-7ced4104145a",
       "fallbacks": []
     },
     "multimodal-looker": {
@@ -76,12 +76,12 @@
     },
     "metis": {
       "model": "qwen3.6-plus",
-      "source": "33e1cf4a-5b9a-4f9f-abce-31136660e9a5",
+      "source": "5922668d-5270-4d8b-aa35-7ced4104145a",
       "fallbacks": []
     },
     "momus": {
       "model": "qwen3.6-plus",
-      "source": "33e1cf4a-5b9a-4f9f-abce-31136660e9a5",
+      "source": "5922668d-5270-4d8b-aa35-7ced4104145a",
       "fallbacks": []
     },
     "atlas": {
@@ -91,12 +91,12 @@
     },
     "code-reviewer": {
       "model": "kimi-k2.6",
-      "source": "33e1cf4a-5b9a-4f9f-abce-31136660e9a5",
+      "source": "5922668d-5270-4d8b-aa35-7ced4104145a",
       "fallbacks": []
     },
     "sisyphus-junior": {
       "model": "deepseek-v4-flash",
-      "source": "33e1cf4a-5b9a-4f9f-abce-31136660e9a5",
+      "source": "5922668d-5270-4d8b-aa35-7ced4104145a",
       "fallbacks": []
     }
   },
