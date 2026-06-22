@@ -99,6 +99,9 @@ export PATH=$PATH:$HOME/.bun/bin
 # Usamos --skip-opencode si está disponible, si no usamos el normal pero nuestro config ya tiene el plugin
 bunx oh-my-opencode install --no-tui --claude=no --gemini=no --copilot=no --opencode-go=yes 2>&1 || true
 
+echo "📥 Instalando skill UI/UX Pro Max..."
+npx -y uipro-cli init --ai opencode
+
 # Restaurar nuestro opencode.json con proveedores y plugin ya inyectados por si el installer lo sobreescribió
 if [ -f opencode.json ]; then
   # Re-inyectar keys si el .env existe (por si el installer volvió a reemplazar el archivo)

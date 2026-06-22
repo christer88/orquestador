@@ -140,6 +140,7 @@ export default {
           else if (acc.provider.includes('deepseek')) badgeClass = 'badge--deepseek';
           else if (acc.provider.includes('xiaomi')) badgeClass = 'badge--xiaomi';
           else if (acc.provider.includes('commandcode')) badgeClass = 'badge--commandcode';
+          else if (acc.provider.includes('cavoti')) badgeClass = 'badge--moonshot';
 
           return `
             <div class="card" style="margin-bottom: var(--space-4); background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-4);">

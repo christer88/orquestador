@@ -259,6 +259,47 @@
         "Qwen/Qwen2-72B-Instruct"
       ],
       "custom": true
+    },
+    {
+      "id": "cavoti",
+      "name": "Cavoti",
+      "description": "Inferencia optimizada en la nube con nodos dedicados en Américas y Singapur",
+      "type": "api",
+      "endpoint": "https://us.cavoti.com/v1",
+      "testEndpoint": "https://us.cavoti.com/v1/models",
+      "auth": {
+        "method": "api_key",
+        "env_key_pattern": "CAVOTI_KEY{N}",
+        "auth_type": "bearer_token",
+        "header": "Authorization"
+      },
+      "multi_account": true,
+      "max_accounts": 3,
+      "rate_limit_strategy": "per_account",
+      "supported_models": [
+        "kimi-k2.6",
+        "deepseek-v4-flash",
+        "deepseek-v4-pro",
+        "glm-5.1",
+        "qwen3.6-plus",
+        "gpt-5.5-pro",
+        "gpt-5.5",
+        "gpt-5.4",
+        "gpt-5.4-mini",
+        "opus-4-8",
+        "opus-4-7",
+        "opus-4-6",
+        "sonnet-4-6",
+        "haiku-4-5"
+      ],
+      "config_format": "openai_compatible",
+      "model_prefix": null,
+      "features": {
+        "streaming": true,
+        "tool_use": true,
+        "vision": false,
+        "file_upload": false
+      }
     }
   ]
 }

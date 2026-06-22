@@ -1,0 +1,23 @@
+{
+  "name": "Mix: DeepSeek (OpenCode) + MiMo (Xiaomi)",
+  "description": "Combina DeepSeek V4 Pro/Flash de OpenCode Go y MiMo Pro/Omni de Xiaomi.",
+  "providers": ["opencode-go", "xiaomi"],
+  "accounts": {
+    "opencode-go": [{ "id": "opencode-go-1", "label": "OpenCode Go" }],
+    "xiaomi": [{ "id": "xiaomi-1", "label": "Xiaomi" }]
+  },
+  "agents": {
+    "sisyphus": { "model": "deepseek-v4-pro", "source": "opencode-go-1", "fallbacks": [] },
+    "hephaestus": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [] },
+    "oracle": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
+    "librarian": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
+    "explore": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [] },
+    "multimodal-looker": { "model": "mimo-v2-omni", "source": "xiaomi-1", "fallbacks": [] },
+    "prometheus": { "model": "deepseek-v4-pro", "source": "opencode-go-1", "fallbacks": [] },
+    "metis": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [] },
+    "momus": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
+    "atlas": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [] },
+    "code-reviewer": { "model": "deepseek-v4-pro", "source": "opencode-go-1", "fallbacks": [] },
+    "sisyphus-junior": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] }
+  }
+}

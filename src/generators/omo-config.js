@@ -20,16 +20,24 @@ export async function generate(projectConfig) {
   };
 
   // Populate agents
+  const ANTHROPIC_MODELS = ['minimax-m3', 'minimax-m2.7', 'minimax-m2.5', 'qwen3.7-max', 'qwen3.7-plus', 'qwen3.6-plus'];
+  const resolveSource = (source, model) => {
+    if (source && source.startsWith('opencode-go') && ANTHROPIC_MODELS.includes(model)) {
+      return `${source}-anthropic`;
+    }
+    return source;
+  };
+
   for (const [agentId, agentConfig] of Object.entries(projectConfig.agents || {})) {
     const fallbacks = (agentConfig.fallbacks || []).map(fb => {
       if (typeof fb === 'object' && fb.source && fb.model) {
-        return `${fb.source}/${fb.model}`;
+        return `${resolveSource(fb.source, fb.model)}/${fb.model}`;
       }
       return fb; // Si ya es un string
     });
 
     omo.agents[agentId] = {
-      model: `${agentConfig.source}/${agentConfig.model}`,
+      model: `${resolveSource(agentConfig.source, agentConfig.model)}/${agentConfig.model}`,
       fallback_models: fallbacks
     };
     

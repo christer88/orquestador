@@ -113,6 +113,12 @@ export default {
         document.getElementById('proj-desc').value = p.description || '';
         document.getElementById('proj-cache').checked = !!p.cacheOptimization;
         
+        // Sync dropdown to show correct template
+        const matchedTemplate = this.templates.find(t => t.name === p.template);
+        if (matchedTemplate) {
+          document.getElementById('proj-template').value = matchedTemplate.filename;
+        }
+
         this.selectedTemplateData = {
           name: p.template || 'Personalizada',
           providers: p.providers || [],
@@ -163,6 +169,7 @@ export default {
       else if (p.includes('deepseek')) badgeClass = 'badge--deepseek';
       else if (p.includes('xiaomi')) badgeClass = 'badge--xiaomi';
       else if (p.includes('commandcode')) badgeClass = 'badge--commandcode';
+      else if (p.includes('cavoti')) badgeClass = 'badge--moonshot';
       
       return `<span class="badge ${badgeClass}" style="margin-right: 4px; margin-bottom: 4px;">${p}</span>`;
     }).join('');

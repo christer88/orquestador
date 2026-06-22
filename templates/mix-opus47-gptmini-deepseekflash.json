@@ -1,0 +1,23 @@
+{
+  "name": "Mix: Opus 4.7 + GPT Mini + DeepSeek Flash",
+  "description": "Opus 4.7 y GPT-5.4 Mini de Cavoti, con DeepSeek Flash de OpenCode Go.",
+  "providers": ["cavoti", "opencode-go"],
+  "accounts": {
+    "cavoti": [{ "id": "cavoti-1", "label": "Cavoti Americas" }],
+    "opencode-go": [{ "id": "opencode-go-1", "label": "OpenCode Go" }]
+  },
+  "agents": {
+    "sisyphus": { "model": "opus-4-7", "source": "cavoti-1", "fallbacks": [] },
+    "hephaestus": { "model": "opus-4-7", "source": "cavoti-1", "fallbacks": [] },
+    "oracle": { "model": "gpt-5.4-mini", "source": "cavoti-1", "fallbacks": [] },
+    "librarian": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
+    "explore": { "model": "gpt-5.4-mini", "source": "cavoti-1", "fallbacks": [] },
+    "multimodal-looker": { "model": "opus-4-7", "source": "cavoti-1", "fallbacks": [] },
+    "prometheus": { "model": "opus-4-7", "source": "cavoti-1", "fallbacks": [] },
+    "metis": { "model": "gpt-5.4-mini", "source": "cavoti-1", "fallbacks": [] },
+    "momus": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
+    "atlas": { "model": "opus-4-7", "source": "cavoti-1", "fallbacks": [] },
+    "code-reviewer": { "model": "opus-4-7", "source": "cavoti-1", "fallbacks": [] },
+    "sisyphus-junior": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] }
+  }
+}

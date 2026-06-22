@@ -1,0 +1,113 @@
+{
+  "name": "Orquestador Fuerte + Agentes Baratos",
+  "description": "Combina un orquestador de pensamiento fuerte (Opus 4.8 / DeepSeek Pro) con agentes baratos (DeepSeek Flash / GPT Mini) para ejecución.",
+  "providers": [
+    "opencode-go",
+    "cavoti"
+  ],
+  "accounts": {
+    "opencode-go": [
+      {
+        "id": "opencode-go-1",
+        "label": "Cuenta Principal"
+      }
+    ],
+    "commandcode": [
+      {
+        "id": "commandcode-1",
+        "label": "Cuenta Principal"
+      }
+    ],
+    "xiaomi": [
+      {
+        "id": "xiaomi-1",
+        "label": "Cuenta Principal"
+      }
+    ],
+    "openrouter": [
+      {
+        "id": "openrouter-1",
+        "label": "OpenRouter"
+      }
+    ]
+  },
+  "agents": {
+    "sisyphus": {
+      "model": "opus-4-8",
+      "source": "8f362ad1-a7b2-4d2c-806b-734ef9a5843a",
+      "fallbacks": []
+    },
+    "hephaestus": {
+      "model": "deepseek-v4-flash",
+      "source": "opencode-go-1",
+      "fallbacks": []
+    },
+    "oracle": {
+      "model": "gpt-5.4-mini",
+      "source": "",
+      "fallbacks": []
+    },
+    "librarian": {
+      "model": "deepseek-v4-flash",
+      "source": "opencode-go-1",
+      "fallbacks": []
+    },
+    "explore": {
+      "model": "gpt-5.4-mini",
+      "source": "",
+      "fallbacks": []
+    },
+    "multimodal-looker": {
+      "model": "deepseek-v4-pro",
+      "source": "opencode-go-1",
+      "fallbacks": []
+    },
+    "prometheus": {
+      "model": "opus-4-8",
+      "source": "",
+      "fallbacks": []
+    },
+    "metis": {
+      "model": "deepseek-v4-flash",
+      "source": "opencode-go-1",
+      "fallbacks": []
+    },
+    "momus": {
+      "model": "deepseek-v4-flash",
+      "source": "opencode-go-1",
+      "fallbacks": []
+    },
+    "atlas": {
+      "model": "deepseek-v4-pro",
+      "source": "opencode-go-1",
+      "fallbacks": []
+    },
+    "code-reviewer": {
+      "model": "opus-4-8",
+      "source": "",
+      "fallbacks": []
+    },
+    "sisyphus-junior": {
+      "model": "gpt-5.4-mini",
+      "source": "",
+      "fallbacks": []
+    }
+  },
+  "runtime_fallback": {
+    "enabled": true,
+    "retry_on_errors": [
+      400,
+      429,
+      503,
+      529
+    ],
+    "max_fallback_attempts": 3,
+    "cooldown_seconds": 60,
+    "timeout_seconds": 30,
+    "notify_on_fallback": true
+  },
+  "background_task": {
+    "defaultConcurrency": 5,
+    "staleTimeoutMs": 180000
+  }
+}

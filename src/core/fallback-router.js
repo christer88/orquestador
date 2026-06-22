@@ -9,8 +9,15 @@ export function buildFallbackChain(agentId, primaryModel, primarySource, account
   const fallbacks = [];
   
   // Encontrar la cuenta principal seleccionada
-  const sourcePrefix = primarySource.split('/')[0];
-  const providerAccounts = accounts[sourcePrefix] || [];
+  let providerPrefix = '';
+  for (const provider of Object.keys(accounts)) {
+    if (primarySource.startsWith(provider)) {
+      providerPrefix = provider;
+      break;
+    }
+  }
+  
+  const providerAccounts = providerPrefix ? accounts[providerPrefix] : [];
   
   // Estrategia: Rotar cuentas del MISMO proveedor primero
   if (providerAccounts.length > 1) {
@@ -22,8 +29,11 @@ export function buildFallbackChain(agentId, primaryModel, primarySource, account
   }
   
   // Agregar OpenRouter como safety net si está disponible
-  if (accounts['openrouter']) {
-    fallbacks.push(`openrouter/${primaryModel}`);
+  if (accounts['openrouter'] && accounts['openrouter'].length > 0) {
+    const openRouterAccId = accounts['openrouter'][0].id;
+    if (openRouterAccId !== primarySource) {
+      fallbacks.push(`${openRouterAccId}/${primaryModel}`);
+    }
   }
   
   return fallbacks;

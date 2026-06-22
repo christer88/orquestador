@@ -3,6 +3,7 @@ import * as opencodeGen from '../generators/opencode-config.js';
 import * as envGen from '../generators/env-generator.js';
 import * as readmeGen from '../generators/readme-generator.js';
 import * as setupGen from '../generators/setup-script.js';
+import { autoGenerateFallbacks } from './fallback-router.js';
 
 export async function validateConfig(config) {
   const errors = [];
@@ -17,10 +18,12 @@ export async function generateAllConfigs(projectConfig) {
     throw new Error(`Configuración inválida: ${validation.errors.join(', ')}`);
   }
 
+  const configWithFallbacks = autoGenerateFallbacks(projectConfig);
+
   const results = {
-    'oh-my-openagent.json': await omoGen.generate(projectConfig),
-    'opencode.json': await opencodeGen.generate(projectConfig),
-    '.env': await envGen.generate(projectConfig),
+    'oh-my-openagent.json': await omoGen.generate(configWithFallbacks),
+    'opencode.json': await opencodeGen.generate(configWithFallbacks),
+    '.env': await envGen.generate(configWithFallbacks),
     'AGENTS-README.md': await readmeGen.generate(projectConfig),
     'setup-ubuntu.sh': await setupGen.generateUbuntu(projectConfig),
     'setup-debian.sh': await setupGen.generateDebian(projectConfig)

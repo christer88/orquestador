@@ -135,7 +135,9 @@ export default {
         { id: 'openrouter-1', label: 'Default OpenRouter' },
         { id: 'deepseek-api-1', label: 'Default DeepSeek API' },
         { id: 'moonshot-1', label: 'Default Moonshot AI' },
-        { id: 'minimax-1', label: 'Default MiniMax' }
+        { id: 'minimax-1', label: 'Default MiniMax' },
+        { id: 'cavoti-1', label: 'Default Cavoti Americas' },
+        { id: 'cavoti-2', label: 'Default Cavoti Singapore' }
       ];
 
       defaults.forEach(d => {
@@ -209,6 +211,7 @@ export default {
             else if (p.includes('deepseek')) badgeClass = 'badge--deepseek';
             else if (p.includes('xiaomi')) badgeClass = 'badge--xiaomi';
             else if (p.includes('commandcode')) badgeClass = 'badge--commandcode';
+            else if (p.includes('cavoti')) badgeClass = 'badge--moonshot';
             return `<span class="badge ${badgeClass}" style="margin-right: 4px; margin-bottom: 4px;">${p}</span>`;
           }).join('');
 
@@ -352,7 +355,8 @@ export default {
           'opencode-go': [{ id: 'opencode-go-1', label: 'Cuenta Principal' }],
           'commandcode': [{ id: 'commandcode-1', label: 'Cuenta Principal' }],
           'xiaomi': [{ id: 'xiaomi-1', label: 'Cuenta Principal' }],
-          'openrouter': [{ id: 'openrouter-1', label: 'OpenRouter' }]
+          'openrouter': [{ id: 'openrouter-1', label: 'OpenRouter' }],
+          'cavoti': [{ id: 'cavoti-1', label: 'Cavoti Americas' }]
         },
         agents: agents
       };

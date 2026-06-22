@@ -6,18 +6,18 @@
     "opencode-go": [{ "id": "opencode-go-1", "label": "Cuenta Principal" }]
   },
   "agents": {
-    "sisyphus": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
-    "hephaestus": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
-    "oracle": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
-    "librarian": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
-    "explore": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
+    "sisyphus": { "model": "deepseek-v4-flash", "source": "openrouter-1", "fallbacks": [] },
+    "hephaestus": { "model": "deepseek-v4-flash", "source": "openrouter-1", "fallbacks": [] },
+    "oracle": { "model": "deepseek-v4-flash", "source": "openrouter-1", "fallbacks": [] },
+    "librarian": { "model": "deepseek-v4-flash", "source": "openrouter-1", "fallbacks": [] },
+    "explore": { "model": "deepseek-v4-flash", "source": "openrouter-1", "fallbacks": [] },
     "multimodal-looker": { "model": "mimo-v2-omni", "source": "opencode-go-1", "fallbacks": [] },
-    "prometheus": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
-    "metis": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
-    "momus": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
-    "atlas": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
-    "code-reviewer": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
-    "sisyphus-junior": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] }
+    "prometheus": { "model": "deepseek-v4-flash", "source": "openrouter-1", "fallbacks": [] },
+    "metis": { "model": "deepseek-v4-flash", "source": "openrouter-1", "fallbacks": [] },
+    "momus": { "model": "deepseek-v4-flash", "source": "openrouter-1", "fallbacks": [] },
+    "atlas": { "model": "deepseek-v4-flash", "source": "openrouter-1", "fallbacks": [] },
+    "code-reviewer": { "model": "deepseek-v4-flash", "source": "openrouter-1", "fallbacks": [] },
+    "sisyphus-junior": { "model": "deepseek-v4-flash", "source": "openrouter-1", "fallbacks": [] }
   },
   "runtime_fallback": {
     "enabled": false,

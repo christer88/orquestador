@@ -1,0 +1,22 @@
+{
+  "name": "OpenCode Go Todo (Bajo Costo)",
+  "description": "Plantilla de bajo costo enfocada totalmente en modelos de OpenCode Go.",
+  "providers": ["opencode-go"],
+  "accounts": {
+    "opencode-go": [{ "id": "opencode-go-1", "label": "Cuenta Principal" }]
+  },
+  "agents": {
+    "sisyphus": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
+    "hephaestus": { "model": "qwen3.6-plus", "source": "opencode-go-1", "fallbacks": [] },
+    "oracle": { "model": "kimi-k2.6", "source": "opencode-go-1", "fallbacks": [] },
+    "librarian": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
+    "explore": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
+    "multimodal-looker": { "model": "mimo-v2-omni", "source": "opencode-go-1", "fallbacks": [] },
+    "prometheus": { "model": "qwen3.6-plus", "source": "opencode-go-1", "fallbacks": [] },
+    "metis": { "model": "glm-5.1", "source": "opencode-go-1", "fallbacks": [] },
+    "momus": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
+    "atlas": { "model": "qwen3.6-plus", "source": "opencode-go-1", "fallbacks": [] },
+    "code-reviewer": { "model": "kimi-k2.6", "source": "opencode-go-1", "fallbacks": [] },
+    "sisyphus-junior": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] }
+  }
+}

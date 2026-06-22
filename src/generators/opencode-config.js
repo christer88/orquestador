@@ -1,13 +1,20 @@
 const PROVIDER_MODELS = {
   'opencode-go': {
     'kimi-k2.6': 'Kimi K2.6',
+    'kimi-k2.7': 'Kimi K2.7',
     'deepseek-v4-flash': 'DeepSeek V4 Flash',
     'deepseek-v4-pro': 'DeepSeek V4 Pro',
     'glm-5.1': 'GLM-5.1',
+    'glm-5.2': 'GLM-5.2',
     'qwen3.6-plus': 'Qwen 3.6 Plus',
-    'qwen3.5-plus': 'Qwen 3.5 Plus',
+    'qwen3.7-plus': 'Qwen 3.7 Plus',
+    'qwen3.7-max': 'Qwen 3.7 Max',
     'mimo-v2-omni': 'MiMo-V2 Omni',
-    'mimo-v2.5-pro': 'MiMo-V2.5 Pro'
+    'mimo-v2.5': 'MiMo V2.5',
+    'mimo-v2.5-pro': 'MiMo-V2.5 Pro',
+    'minimax-m2.5': 'MiniMax M2.5',
+    'minimax-m2.7': 'MiniMax M2.7',
+    'minimax-m3': 'MiniMax M3'
   },
   'openrouter': {
     'kimi-k2.6': 'Kimi K2.6',
@@ -54,6 +61,22 @@ const PROVIDER_MODELS = {
     'nvidia/nemotron-3-nano-30b-a3b': 'Nemotron-3 Nano 30B',
     'nvidia/llama-3.1-nemotron-nano-vl-8b-v1': 'Llama 3.1 Nemotron Nano VL 8B',
     'z-ai/glm-5.1': 'Z.ai GLM-5.1'
+  },
+  'cavoti': {
+    'kimi-k2.6': 'Kimi K2.6',
+    'deepseek-v4-flash': 'DeepSeek V4 Flash',
+    'deepseek-v4-pro': 'DeepSeek V4 Pro',
+    'glm-5.1': 'GLM-5.1',
+    'qwen3.6-plus': 'Qwen 3.6 Plus',
+    'gpt-5.5-pro': 'gpt-5.5-pro',
+    'gpt-5.5': 'gpt-5.5',
+    'gpt-5.4': 'gpt-5.4',
+    'gpt-5.4-mini': 'gpt-5.4-mini',
+    'opus-4-8': 'opus-4-8',
+    'opus-4-7': 'opus-4-7',
+    'opus-4-6': 'opus-4-6',
+    'sonnet-4-6': 'sonnet-4-6',
+    'haiku-4-5': 'haiku-4-5'
   }
 };
 
@@ -61,7 +84,7 @@ export async function generate(projectConfig) {
   const config = {
     $schema: "https://opencode.ai/config.json",
     // Plugin de agentes Oh My OpenAgent — necesario para cargar agentes y herramientas
-    plugin: ["oh-my-openagent"],
+    plugin: ["oh-my-openagent", "ui-ux-pro-max"],
     model: "deepseek-v4-flash", // Modelo default barato
     permission: "allow",
     provider: {},
@@ -105,9 +128,40 @@ export async function generate(projectConfig) {
       } else if (providerId === 'opencode-go') {
         providerConfig.api = 'openai';
         providerConfig.options.baseURL = "https://opencode.ai/zen/go/v1";
+
+        const ANTHROPIC_MODELS = ['minimax-m3', 'minimax-m2.7', 'minimax-m2.5', 'qwen3.7-max', 'qwen3.7-plus', 'qwen3.6-plus'];
+        const hasAnthropic = acc.models && acc.models.some(m => ANTHROPIC_MODELS.includes(m));
+        if (hasAnthropic) {
+          config.provider[`${acc.id}-anthropic`] = {
+            api: 'anthropic',
+            options: {
+              apiKey: acc.envKey ? process.env[acc.envKey] : undefined,
+              baseURL: "https://opencode.ai/zen/go/v1",
+              setCacheKey: projectConfig.cacheOptimization || false,
+              headers: projectConfig.cacheOptimization ? { "x-session-id": "{env:PROJECT_CACHE_ID}" } : {}
+            },
+            models: {}
+          };
+        }
       } else if (providerId === 'nvidia') {
         providerConfig.api = 'openai';
         providerConfig.options.baseURL = "https://integrate.api.nvidia.com/v1";
+      } else if (providerId === 'cavoti') {
+        providerConfig.api = 'openai';
+        const label = (acc.label || '').toLowerCase();
+        const envKey = (acc.envKey || '').toLowerCase();
+        const isSingapore = label.includes('sg') || 
+                            label.includes('singapore') || 
+                            label.includes('singapur') || 
+                            envKey.includes('sg') || 
+                            envKey.includes('singapore') || 
+                            envKey.includes('singapur') ||
+                            acc.id.endsWith('-2');
+        if (isSingapore) {
+          providerConfig.options.baseURL = "https://sg.cavoti.com/v1";
+        } else {
+          providerConfig.options.baseURL = "https://us.cavoti.com/v1";
+        }
       } else if (providerId.startsWith('custom-')) {
         // Fallback dinámico si se requiere
         providerConfig.api = 'openai';
@@ -123,6 +177,7 @@ export async function generate(projectConfig) {
       // Declarar explícitamente los modelos soportados para que OpenCode los considere válidos
       const modelMap = PROVIDER_MODELS[providerId] || {};
       providerConfig.models = {};
+      const ANTHROPIC_MODELS = ['minimax-m3', 'minimax-m2.7', 'minimax-m2.5', 'qwen3.7-max', 'qwen3.7-plus', 'qwen3.6-plus'];
       for (const [modelId, modelName] of Object.entries(modelMap)) {
         let realModelId = modelId;
         if (providerId === 'openrouter') {
@@ -150,10 +205,19 @@ export async function generate(projectConfig) {
           else if (modelId === 'minimax-m3') realModelId = 'MiniMaxAI/MiniMax-M3';
         }
         
-        providerConfig.models[modelId] = {
-          id: realModelId,
-          name: modelName
-        };
+        if (providerId === 'opencode-go' && ANTHROPIC_MODELS.includes(modelId)) {
+          if (config.provider[`${acc.id}-anthropic`]) {
+            config.provider[`${acc.id}-anthropic`].models[modelId] = {
+              id: realModelId,
+              name: modelName
+            };
+          }
+        } else {
+          providerConfig.models[modelId] = {
+            id: realModelId,
+            name: modelName
+          };
+        }
       }
       
       config.provider[acc.id] = providerConfig;

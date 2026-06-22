@@ -285,7 +285,8 @@
       "rate_limits": {},
       "available_sources": [
         "openrouter",
-        "minimax"
+        "minimax",
+        "opencode-go"
       ],
       "context_window": 131072,
       "supports_tools": true,
@@ -571,6 +572,190 @@
       ],
       "context_window": 32768,
       "is_free": true
+    },
+    {
+      "id": "gpt-5.5-pro",
+      "name": "gpt-5.5-pro",
+      "provider_origin": "openai",
+      "tier": 3,
+      "available_sources": [
+        "cavoti"
+      ],
+      "context_window": 128000,
+      "supports_tools": true,
+      "supports_vision": false
+    },
+    {
+      "id": "gpt-5.5",
+      "name": "gpt-5.5",
+      "provider_origin": "openai",
+      "tier": 2,
+      "available_sources": [
+        "cavoti"
+      ],
+      "context_window": 128000,
+      "supports_tools": true,
+      "supports_vision": false
+    },
+    {
+      "id": "gpt-5.4",
+      "name": "gpt-5.4",
+      "provider_origin": "openai",
+      "tier": 2,
+      "available_sources": [
+        "cavoti"
+      ],
+      "context_window": 128000,
+      "supports_tools": true,
+      "supports_vision": false
+    },
+    {
+      "id": "gpt-5.4-mini",
+      "name": "gpt-5.4-mini",
+      "provider_origin": "openai",
+      "tier": 1,
+      "available_sources": [
+        "cavoti"
+      ],
+      "context_window": 128000,
+      "supports_tools": true,
+      "supports_vision": false
+    },
+    {
+      "id": "opus-4-8",
+      "name": "opus-4-8",
+      "provider_origin": "anthropic",
+      "tier": 3,
+      "available_sources": [
+        "cavoti"
+      ],
+      "context_window": 200000,
+      "supports_tools": true,
+      "supports_vision": false
+    },
+    {
+      "id": "opus-4-7",
+      "name": "opus-4-7",
+      "provider_origin": "anthropic",
+      "tier": 3,
+      "available_sources": [
+        "cavoti"
+      ],
+      "context_window": 200000,
+      "supports_tools": true,
+      "supports_vision": false
+    },
+    {
+      "id": "opus-4-6",
+      "name": "opus-4-6",
+      "provider_origin": "anthropic",
+      "tier": 3,
+      "available_sources": [
+        "cavoti"
+      ],
+      "context_window": 200000,
+      "supports_tools": true,
+      "supports_vision": false
+    },
+    {
+      "id": "sonnet-4-6",
+      "name": "sonnet-4-6",
+      "provider_origin": "anthropic",
+      "tier": 2,
+      "available_sources": [
+        "cavoti"
+      ],
+      "context_window": 200000,
+      "supports_tools": true,
+      "supports_vision": false
+    },
+    {
+      "id": "haiku-4-5",
+      "name": "haiku-4-5",
+      "provider_origin": "anthropic",
+      "tier": 1,
+      "available_sources": [
+        "cavoti"
+      ],
+      "context_window": 200000,
+      "supports_tools": true,
+      "supports_vision": false
+    },
+    {
+      "id": "glm-5.2",
+      "name": "GLM 5.2",
+      "provider_origin": "zhipu",
+      "tier": 3,
+      "pricing": {
+        "input_per_million": null,
+        "output_per_million": null,
+        "currency": "USD"
+      },
+      "available_sources": [
+        "opencode-go"
+      ],
+      "context_window": 131072,
+      "supports_tools": true,
+      "supports_vision": false,
+      "opencode_go_id": "glm-5.2",
+      "is_free": false
+    },
+    {
+      "id": "kimi-k2.7",
+      "name": "Kimi K2.7",
+      "provider_origin": "moonshot",
+      "tier": 3,
+      "pricing": {
+        "input_per_million": null,
+        "output_per_million": null,
+        "currency": "USD"
+      },
+      "available_sources": [
+        "opencode-go"
+      ],
+      "context_window": 131072,
+      "supports_tools": true,
+      "supports_vision": false,
+      "opencode_go_id": "kimi-k2.7",
+      "is_free": false
+    },
+    {
+      "id": "qwen3.7-max",
+      "name": "Qwen 3.7 Max",
+      "provider_origin": "alibaba",
+      "tier": 3,
+      "pricing": {
+        "input_per_million": null,
+        "output_per_million": null,
+        "currency": "USD"
+      },
+      "available_sources": [
+        "opencode-go"
+      ],
+      "context_window": 131072,
+      "supports_tools": true,
+      "supports_vision": false,
+      "opencode_go_id": "qwen3.7-max",
+      "is_free": false
+    },
+    {
+      "id": "qwen3.7-plus",
+      "name": "Qwen 3.7 Plus",
+      "provider_origin": "alibaba",
+      "tier": 2,
+      "pricing": {
+        "input_per_million": null,
+        "output_per_million": null,
+        "currency": "USD"
+      },
+      "available_sources": [
+        "opencode-go"
+      ],
+      "context_window": 131072,
+      "supports_tools": true,
+      "supports_vision": false,
+      "opencode_go_id": "qwen3.7-plus",
+      "is_free": false
     }
   ]
 }

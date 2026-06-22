@@ -259,6 +259,69 @@ async function ejecutarGeneradores(proyecto) {
 // RUTAS: PROYECTOS (/api/projects)
 // ═══════════════════════════════════════════════════════════════
 
+// ─── Lógica Compartida de Actualización a Oh My OpenCode ──────────
+async function pushUpdateToDeployAndOpenCode(proyecto) {
+  const generados = await ejecutarGeneradores(proyecto);
+  if (generados._error) return { ok: false, error: generados._error };
+
+  const nombreCarpeta = `proyecto-${proyecto.name.replace(/\s+/g, '-').toLowerCase()}`;
+  const targetDir = path.join(__dirname, nombreCarpeta);
+  await fs.mkdir(targetDir, { recursive: true });
+
+  const archivosActualizados = [];
+  for (const [nombre, contenido] of Object.entries(generados)) {
+    if (nombre.startsWith('_')) continue;
+    const rutaArchivo = path.join(targetDir, nombre);
+    const contenidoStr = typeof contenido === 'string' ? contenido : JSON.stringify(contenido, null, 2);
+    await fs.writeFile(rutaArchivo, contenidoStr, 'utf-8');
+    archivosActualizados.push(nombre);
+  }
+
+  let keysInyectadas = 0;
+  try {
+    const envFilePath = path.join(targetDir, '.env');
+    const opencodeJsonPath = path.join(targetDir, 'opencode.json');
+    let envVars = {};
+    try {
+      const envContent = await fs.readFile(envFilePath, 'utf-8');
+      for (const line of envContent.split('\n')) {
+        const trimmed = line.trim();
+        if (trimmed && !trimmed.startsWith('#')) {
+          const eqIdx = trimmed.indexOf('=');
+          if (eqIdx !== -1) envVars[trimmed.slice(0, eqIdx).trim()] = trimmed.slice(eqIdx + 1).trim();
+        }
+      }
+    } catch (e) {}
+
+    try {
+      let opencodeContent = await fs.readFile(opencodeJsonPath, 'utf-8');
+      opencodeContent = opencodeContent.replace(/\{env:([A-Za-z0-9_]+)\}/g, (match, varName) => {
+        const val = envVars[varName] || process.env[varName];
+        if (val) {
+          keysInyectadas++;
+          return val;
+        }
+        return match;
+      });
+      await fs.writeFile(opencodeJsonPath, opencodeContent, 'utf-8');
+      
+      const globalConfigDir = path.join(process.env.HOME || '/home/srvdes', '.config', 'opencode');
+      await fs.mkdir(globalConfigDir, { recursive: true });
+      await fs.writeFile(path.join(globalConfigDir, 'opencode.json'), opencodeContent, 'utf-8');
+      
+      try {
+        const agentConfigPath = path.join(targetDir, 'oh-my-openagent.json');
+        const agentContent = await fs.readFile(agentConfigPath, 'utf-8');
+        await fs.writeFile(path.join(globalConfigDir, 'oh-my-openagent.json'), agentContent, 'utf-8');
+      } catch(e) {}
+    } catch (e) {}
+  } catch (envErr) {}
+
+  await escribirJSON(path.join(targetDir, 'project.json'), proyecto);
+  return { ok: true, targetDir, archivos: archivosActualizados, keysInyectadas };
+}
+// ──────────────────────────────────────────────────────────────
+
 /**
  * GET /api/projects — Listar todos los proyectos
  */
@@ -337,6 +400,9 @@ app.post('/api/projects', asyncHandler(async (req, res) => {
 
   await escribirJSON(path.join(DIRS.projects, `${id}.json`), proyecto);
 
+  // Auto-push a la carpeta y al config global
+  await pushUpdateToDeployAndOpenCode(proyecto);
+
   res.status(201).json({ ok: true, project: proyecto });
 }));
 
@@ -362,12 +428,12 @@ app.put('/api/projects/:id', asyncHandler(async (req, res) => {
 
   await escribirJSON(rutaProyecto, actualizado);
 
-  // Regenerar archivos de configuración automáticamente
+  // Auto-push a la carpeta y al config global de Oh My OpenCode
   try {
-    const archivosGenerados = await ejecutarGeneradores(actualizado);
-    const archivosOk = Object.keys(archivosGenerados).filter(k => !k.startsWith('_'));
-    console.log(`♻️  Proyecto '${actualizado.name}' actualizado y configs regeneradas: ${archivosOk.join(', ')}`);
-    res.json({ ok: true, project: actualizado, generated: archivosOk });
+    const pushRes = await pushUpdateToDeployAndOpenCode(actualizado);
+    if (!pushRes.ok) throw new Error(pushRes.error);
+    console.log(`♻️  Proyecto '${actualizado.name}' actualizado y configs inyectadas globalmente.`);
+    res.json({ ok: true, project: actualizado, generated: pushRes.archivos });
   } catch (genErr) {
     console.error(`⚠️  Error regenerando configs para '${actualizado.name}':`, genErr.message);
     res.json({ ok: true, project: actualizado });
@@ -616,93 +682,17 @@ app.post('/api/projects/:id/update', asyncHandler(async (req, res) => {
   if (!proyecto) {
     return res.status(404).json({ ok: false, error: `Proyecto '${req.params.id}' no encontrado` });
   }
-
-  // Generar todos los archivos
-  const generados = await ejecutarGeneradores(proyecto);
-  if (generados._error) {
-    return res.status(500).json({ ok: false, error: generados._error });
+  const pushRes = await pushUpdateToDeployAndOpenCode(proyecto);
+  if (!pushRes.ok) {
+    return res.status(500).json({ ok: false, error: pushRes.error });
   }
-
-  // Determinar ruta de destino
-  const nombreCarpeta = `proyecto-${proyecto.name.replace(/\s+/g, '-').toLowerCase()}`;
-  const targetDir = (req.body && req.body.targetDir) || path.join(__dirname, nombreCarpeta);
-
-  // Asegurar que el directorio de destino existe
-  await fs.mkdir(targetDir, { recursive: true });
-
-  // Escribir los archivos generados
-  const archivosActualizados = [];
-  for (const [nombre, contenido] of Object.entries(generados)) {
-    if (nombre.startsWith('_')) continue;
-    const rutaArchivo = path.join(targetDir, nombre);
-    const contenidoStr = typeof contenido === 'string' ? contenido : JSON.stringify(contenido, null, 2);
-    await fs.writeFile(rutaArchivo, contenidoStr, 'utf-8');
-    archivosActualizados.push(nombre);
-  }
-
-  // ─── Inyectar keys reales en opencode.json del proyecto ───────────────────
-  let keysInyectadas = 0;
-  try {
-    const envFilePath = path.join(targetDir, '.env');
-    const opencodeJsonPath = path.join(targetDir, 'opencode.json');
-    
-    // Parsear las variables del .env generado
-    let envVars = {};
-    try {
-      const envContent = await fs.readFile(envFilePath, 'utf-8');
-      for (const line of envContent.split('\n')) {
-        const trimmed = line.trim();
-        if (trimmed && !trimmed.startsWith('#')) {
-          const eqIdx = trimmed.indexOf('=');
-          if (eqIdx !== -1) {
-            const k = trimmed.slice(0, eqIdx).trim();
-            const v = trimmed.slice(eqIdx + 1).trim();
-            envVars[k] = v;
-          }
-        }
-      }
-    } catch (e) {
-      console.warn("No se encontró .env o error al leerlo durante update", e.message);
-    }
-    
-    try {
-      let opencodeContent = await fs.readFile(opencodeJsonPath, 'utf-8');
-      opencodeContent = opencodeContent.replace(/\{env:([A-Za-z0-9_]+)\}/g, (match, varName) => {
-        const val = envVars[varName] || process.env[varName];
-        if (val) {
-          keysInyectadas++;
-          return val;
-        }
-        return match;
-      });
-      await fs.writeFile(opencodeJsonPath, opencodeContent, 'utf-8');
-      console.log(`✅ Update: ${keysInyectadas} API keys inyectadas en opencode.json del proyecto`);
-
-      const globalOpencodePath = path.join(process.env.HOME || '/home/srvdes', '.config', 'opencode', 'opencode.json');
-      try {
-        await fs.mkdir(path.dirname(globalOpencodePath), { recursive: true });
-        await fs.writeFile(globalOpencodePath, opencodeContent, 'utf-8');
-        console.log(`✅ Update: opencode.json global actualizado con el opencode.json del proyecto`);
-      } catch (ge) {
-        console.warn(`⚠️ No se pudo actualizar opencode.json global: ${ge.message}`);
-      }
-    } catch (e) {
-      console.warn("No se encontró opencode.json durante update", e.message);
-    }
-  } catch (envErr) {
-    console.warn(`⚠️ Error inyectando keys: ${envErr.message}`);
-  }
-  // ──────────────────────────────────────────────────────────────────────────
-
-  // Guardar proyecto.json original en el destino
-  await escribirJSON(path.join(targetDir, 'project.json'), proyecto);
 
   res.json({
     ok: true,
     message: 'Archivos de configuración actualizados con éxito',
-    targetDir,
-    archivos: archivosActualizados,
-    keysInyectadas
+    targetDir: pushRes.targetDir,
+    archivos: pushRes.archivos,
+    keysInyectadas: pushRes.keysInyectadas
   });
 }));
 
@@ -956,10 +946,10 @@ app.post('/api/templates', asyncHandler(async (req, res) => {
         await escribirJSON(rutaProyecto, proyecto);
         proyectosActualizados++;
 
-        // Regenerar archivos de configuración para que los cambios se apliquen de inmediato
+        // Regenerar archivos y hacer auto-push global a Oh My OpenCode de inmediato
         try {
-          const archivosGenerados = await ejecutarGeneradores(proyecto);
-          console.log(`  ♻️  Configs regeneradas para proyecto '${proyecto.name}':`, Object.keys(archivosGenerados).filter(k => !k.startsWith('_')).join(', '));
+          await pushUpdateToDeployAndOpenCode(proyecto);
+          console.log(`  ♻️  Configs inyectadas globalmente para proyecto '${proyecto.name}'`);
         } catch (genErr) {
           console.error(`  ⚠️  Error regenerando configs para '${proyecto.name}':`, genErr.message);
         }

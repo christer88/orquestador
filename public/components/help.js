@@ -46,13 +46,7 @@ export default {
             </button>
           </div>
           
-          <!-- Selector de Proyecto (visible solo en tab de agentes) -->
-          <div id="project-selector-container" style="display: none; align-items: center; gap: var(--space-2); margin-right: var(--space-2);">
-            <span style="font-size: var(--text-xs); color: var(--text-secondary);">Ver agentes de:</span>
-            <select id="help-project-select" class="form-select" style="padding: 4px var(--space-3); font-size: var(--text-xs); width: 200px;" onchange="window.appHelp.loadAgentsReadme(this.value)">
-              <option value="">Cargando proyectos...</option>
-            </select>
-          </div>
+          <!-- Selector de Proyecto (eliminado) -->
         </div>
 
         <!-- Content Area -->
@@ -83,18 +77,15 @@ export default {
   async switchTab(tab) {
     const btnSystem = document.getElementById('tab-btn-system');
     const btnAgents = document.getElementById('tab-btn-agents');
-    const selectorContainer = document.getElementById('project-selector-container');
     
     if (tab === 'system') {
       btnSystem.className = 'btn btn--primary';
       btnAgents.className = 'btn btn--secondary';
-      selectorContainer.style.display = 'none';
       
       await this.loadSystemReadme();
     } else {
       btnSystem.className = 'btn btn--secondary';
       btnAgents.className = 'btn btn--primary';
-      selectorContainer.style.display = 'flex';
       
       await this.loadProjectsList();
       await this.loadAgentsReadme(this.selectedProjectId);
