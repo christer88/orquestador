@@ -61,17 +61,34 @@ curl -fsSL https://deb.nodesource.com/setup_22.x | sudo bash -
 sudo apt install -y nodejs
 ```
 
-### Paso C: Iniciar el Servidor
-Instala las dependencias y arranca el servidor en modo desarrollo:
+### Paso C: Arrancar el Servidor (Modo Producción con PM2)
+Instala las dependencias y utiliza PM2 para que el servidor corra en segundo plano permanentemente, incluso si cierras la consola SSH.
+
 ```bash
-# Instalar dependencias
+# 1. Instalar dependencias del proyecto
 npm install
 
-# Levantar el servidor de desarrollo
-npm run dev
-```
-Verás en la consola que el servidor está escuchando en el puerto `3847`. Si estás en una VM remota y quieres acceder a la interfaz, asegúrate de habilitar el puerto `3847` en el firewall de tu proveedor de nube o crea un túnel SSH.
+# 2. Instalar PM2 globalmente (si no lo tienes)
+sudo npm install -g pm2
 
+# 3. Levantar el servidor sin modo "watch" (para evitar reinicios bruscos al guardar)
+npx pm2 start server.js --name orquestador
+
+# 4. Guardar la lista de procesos para que arranquen solos al reiniciar la VM
+npx pm2 save
+npx pm2 startup
+```
+
+Verás en la consola que el servidor está escuchando en el puerto `3847`. Si estás en una VM remota y quieres acceder a la interfaz web desde tu computadora, asegúrate de habilitar el puerto `3847` en el firewall de tu proveedor de nube (AWS, DigitalOcean, etc.) o usa un túnel SSH.
+
+Para ver los logs en cualquier momento o reiniciar el sistema:
+```bash
+# Ver los logs en vivo
+npx pm2 logs orquestador
+
+# Reiniciar el sistema para aplicar nuevas variables de entorno
+npx pm2 restart orquestador --update-env
+```
 ---
 
 ## 2. Cómo utilizar la Interfaz Web
