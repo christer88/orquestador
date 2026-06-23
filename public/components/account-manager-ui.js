@@ -14,46 +14,61 @@ export default {
         </div>
 
         <div class="grid" style="display: grid; grid-template-columns: 1fr 1.5fr; gap: var(--space-6);">
-          <!-- Formulario Agregar -->
-          <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: var(--space-2); margin-bottom: var(--space-4);">
-              <h3 style="margin: 0;">Registrar Cuenta</h3>
-              <button class="btn btn--secondary btn--sm" onclick="window.appAccountManager.showCustomProviderModal()">➕ Añadir Proveedor</button>
+          <div style="display: flex; flex-direction: column; gap: var(--space-6);">
+            <!-- Formulario Agregar -->
+            <div class="card">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: var(--space-2); margin-bottom: var(--space-4);">
+                <h3 style="margin: 0;">Registrar Cuenta</h3>
+                <button class="btn btn--secondary btn--sm" onclick="window.appAccountManager.showCustomProviderModal()">➕ Añadir Proveedor</button>
+              </div>
+              <form id="account-form" onsubmit="event.preventDefault(); window.appAccountManager.saveAccount();">
+                <div class="form-group" style="margin-bottom: var(--space-4);">
+                  <label class="form-label form-label--required">Proveedor</label>
+                  <select id="acc-provider" class="form-select" required>
+                    <option value="">Selecciona un proveedor...</option>
+                  </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: var(--space-4);">
+                  <label class="form-label form-label--required">Nombre / Etiqueta</label>
+                  <input type="text" id="acc-label" class="form-input" placeholder="Ej: Mi Cuenta Principal" required>
+                </div>
+
+                <div class="form-group" style="margin-bottom: var(--space-4);">
+                  <label class="form-label form-label--required">Variable de Entorno (.env)</label>
+                  <input type="text" id="acc-envkey" class="form-input form-input--code" placeholder="Ej: OPENCODE_GO_1_AUTH" required>
+                  <span class="form-hint">El nombre de la variable (ej: OPENCODE_GO_1_AUTH).</span>
+                </div>
+
+                <div class="form-group" style="margin-bottom: var(--space-4);">
+                  <label class="form-label">Valor de la API Key (Opcional)</label>
+                  <input type="password" id="acc-apikey" class="form-input form-input--code" placeholder="Ingresa el valor real de la API key (ej: sk-...)">
+                  <span class="form-hint">Si lo ingresas, se guardará de forma segura en el archivo .env del servidor para probar conexiones.</span>
+                </div>
+
+                <div class="form-group" style="margin-top: var(--space-6);">
+                  <label class="form-checkbox">
+                    <input type="checkbox" id="acc-active" checked>
+                    <span class="form-checkbox__label">Cuenta Activa</span>
+                  </label>
+                </div>
+
+                <button type="submit" class="btn btn--primary" style="margin-top: var(--space-6); width: 100%;">Guardar Cuenta 💾</button>
+              </form>
             </div>
-            <form id="account-form" onsubmit="event.preventDefault(); window.appAccountManager.saveAccount();">
-              <div class="form-group" style="margin-bottom: var(--space-4);">
-                <label class="form-label form-label--required">Proveedor</label>
-                <select id="acc-provider" class="form-select" required>
-                  <option value="">Selecciona un proveedor...</option>
-                </select>
-              </div>
 
-              <div class="form-group" style="margin-bottom: var(--space-4);">
-                <label class="form-label form-label--required">Nombre / Etiqueta</label>
-                <input type="text" id="acc-label" class="form-input" placeholder="Ej: Mi Cuenta Principal" required>
+            <!-- Exportar e Importar -->
+            <div class="card">
+              <h3 style="margin: 0 0 var(--space-4) 0; border-bottom: 1px solid var(--border); padding-bottom: var(--space-2);">📦 Respaldo del Sistema</h3>
+              <p class="text-secondary" style="font-size: var(--text-sm); margin-bottom: var(--space-4);">
+                Descarga un archivo ZIP con tus cuentas, llaves (.env) y plantillas para moverlas a otro servidor.
+              </p>
+              <div style="display: flex; gap: var(--space-4); margin-bottom: var(--space-4);">
+                <button class="btn btn--secondary" style="flex: 1;" onclick="window.location.href='/api/backup/export'">📥 Descargar ZIP</button>
+                <button class="btn btn--primary" style="flex: 1;" onclick="document.getElementById('import-file').click()">📤 Restaurar ZIP</button>
+                <input type="file" id="import-file" accept=".zip" style="display: none;" onchange="window.appAccountManager.importBackup(event)">
               </div>
-
-              <div class="form-group" style="margin-bottom: var(--space-4);">
-                <label class="form-label form-label--required">Variable de Entorno (.env)</label>
-                <input type="text" id="acc-envkey" class="form-input form-input--code" placeholder="Ej: OPENCODE_GO_1_AUTH" required>
-                <span class="form-hint">El nombre de la variable (ej: OPENCODE_GO_1_AUTH).</span>
-              </div>
-
-              <div class="form-group" style="margin-bottom: var(--space-4);">
-                <label class="form-label">Valor de la API Key (Opcional)</label>
-                <input type="password" id="acc-apikey" class="form-input form-input--code" placeholder="Ingresa el valor real de la API key (ej: sk-...)">
-                <span class="form-hint">Si lo ingresas, se guardará de forma segura en el archivo .env del servidor para probar conexiones.</span>
-              </div>
-
-              <div class="form-group" style="margin-top: var(--space-6);">
-                <label class="form-checkbox">
-                  <input type="checkbox" id="acc-active" checked>
-                  <span class="form-checkbox__label">Cuenta Activa</span>
-                </label>
-              </div>
-
-              <button type="submit" class="btn btn--primary" style="margin-top: var(--space-6); width: 100%;">Guardar Cuenta 💾</button>
-            </form>
+            </div>
           </div>
 
           <!-- Listado de Cuentas -->
@@ -304,6 +319,39 @@ export default {
       }
     } catch (e) {
       alert('Error de red: ' + e.message);
+    }
+  },
+
+  async importBackup(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (!confirm('Esto sobrescribirá tus cuentas, llaves (.env) y plantillas actuales. ¿Estás seguro de continuar?')) {
+      event.target.value = '';
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('backup', file);
+
+    try {
+      const res = await fetch('/api/backup/import', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert(data.message || 'Respaldo importado correctamente.');
+        await this.loadAccounts();
+        window.location.reload();
+      } else {
+        alert('Error al importar: ' + (data.error || 'Desconocido'));
+      }
+    } catch (e) {
+      alert('Error de red: ' + e.message);
+    } finally {
+      event.target.value = '';
     }
   }
 }
