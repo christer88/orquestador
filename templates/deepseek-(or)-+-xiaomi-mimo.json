@@ -1,10 +1,9 @@
 {
-  "name": "Ultimate Mix: Composer + Cavoti + DeepSeek + MiMo",
-  "description": "Mezcla de Composer (GPT-5.5 ), Cavoti, DeepSeek Flash (OpenCode) y MiMo Pro (Xiaomi).",
+  "name": "DeepSeek (OR) + Xiaomi MiMo",
+  "description": "Combina la inteligencia de DeepSeek Pro y Flash (vía OpenRouter) con los modelos de Xiaomi MiMo (API Pay-as-you-go).",
   "providers": [
-    "opencode-go",
-    "xiaomi",
-    "cavoti"
+    "openrouter",
+    "xiaomi"
   ],
   "accounts": {
     "opencode-go": [
@@ -40,63 +39,63 @@
   },
   "agents": {
     "sisyphus": {
-      "model": "gpt-5.5",
-      "source": "cavoti-1",
+      "model": "deepseek-v4-pro",
+      "source": "openrouter-1",
       "fallbacks": []
     },
     "hephaestus": {
-      "model": "gpt-5.5",
-      "source": "cavoti-1",
+      "model": "mimo-v2.5-pro",
+      "source": "a2f23c1a-e403-4ca4-8351-d5f877eaf264",
       "fallbacks": []
     },
     "oracle": {
-      "model": "deepseek-v4-flash",
-      "source": "opencode-go-1",
+      "model": "mimo-v2-omni",
+      "source": "a2f23c1a-e403-4ca4-8351-d5f877eaf264",
       "fallbacks": []
     },
     "librarian": {
       "model": "deepseek-v4-flash",
-      "source": "opencode-go-1",
+      "source": "openrouter-1",
       "fallbacks": []
     },
     "explore": {
-      "model": "mimo-v2.5-pro",
-      "source": "xiaomi-1",
+      "model": "mimo-v2-flash",
+      "source": "a2f23c1a-e403-4ca4-8351-d5f877eaf264",
       "fallbacks": []
     },
     "multimodal-looker": {
       "model": "mimo-v2-omni",
-      "source": "xiaomi-1",
+      "source": "a2f23c1a-e403-4ca4-8351-d5f877eaf264",
       "fallbacks": []
     },
     "prometheus": {
-      "model": "gpt-5.5",
-      "source": "cavoti-1",
+      "model": "deepseek-v4-pro",
+      "source": "openrouter-1",
       "fallbacks": []
     },
     "metis": {
-      "model": "mimo-v2.5-pro",
-      "source": "xiaomi-1",
+      "model": "deepseek-v4-pro",
+      "source": "openrouter-1",
       "fallbacks": []
     },
     "momus": {
       "model": "deepseek-v4-flash",
-      "source": "opencode-go-1",
+      "source": "openrouter-1",
       "fallbacks": []
     },
     "atlas": {
-      "model": "gpt-5.5",
-      "source": "cavoti-1",
+      "model": "mimo-v2.5-pro",
+      "source": "a2f23c1a-e403-4ca4-8351-d5f877eaf264",
       "fallbacks": []
     },
     "code-reviewer": {
-      "model": "gpt-5.5",
-      "source": "cavoti-1",
+      "model": "deepseek-v4-pro",
+      "source": "openrouter-1",
       "fallbacks": []
     },
     "sisyphus-junior": {
       "model": "deepseek-v4-flash",
-      "source": "opencode-go-1",
+      "source": "openrouter-1",
       "fallbacks": []
     }
   },

@@ -60,7 +60,11 @@ const PROVIDER_MODELS = {
     'nvidia/nemotron-3-ultra-550b-a55b': 'Nemotron-3 Ultra 550B',
     'nvidia/nemotron-3-nano-30b-a3b': 'Nemotron-3 Nano 30B',
     'nvidia/llama-3.1-nemotron-nano-vl-8b-v1': 'Llama 3.1 Nemotron Nano VL 8B',
-    'z-ai/glm-5.1': 'Z.ai GLM-5.1'
+    'openai/gpt-oss-120b': 'GPT OSS 120B',
+    'qwen/qwen3-next-80b-a3b-instruct': 'Qwen 3 Next 80B Instruct',
+    'z-ai/glm-5.1': 'Z.ai GLM-5.1',
+    'minimaxai/minimax-m2.7': 'MiniMax M2.7',
+    'moonshotai/kimi-k2.6': 'Kimi K2.6'
   },
   'cavoti': {
     'kimi-k2.6': 'Kimi K2.6',
@@ -116,7 +120,7 @@ export async function generate(projectConfig) {
         providerConfig.options.baseURL = "https://api.moonshot.ai/v1";
       } else if (providerId === 'xiaomi') {
         providerConfig.api = 'openai';
-        providerConfig.options.baseURL = "https://token-plan-sgp.xiaomimimo.com/v1";
+        providerConfig.options.baseURL = `{mimoUrl:${envKey}}`;
       } else if (providerId === 'minimax') {
         providerConfig.api = 'openai';
         providerConfig.options.baseURL = "https://api.minimax.chat/v1";

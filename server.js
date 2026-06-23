@@ -283,7 +283,7 @@ async function pushUpdateToDeployAndOpenCode(proyecto) {
     const opencodeJsonPath = path.join(targetDir, 'opencode.json');
     let envVars = {};
     try {
-      const envContent = await fs.readFile(envFilePath, 'utf-8');
+      const envContent = await fs.readFile(path.join(__dirname, '.env'), 'utf-8');
       for (const line of envContent.split('\n')) {
         const trimmed = line.trim();
         if (trimmed && !trimmed.startsWith('#')) {
@@ -303,6 +303,16 @@ async function pushUpdateToDeployAndOpenCode(proyecto) {
         }
         return match;
       });
+      
+      opencodeContent = opencodeContent.replace(/\{mimoUrl:([A-Za-z0-9_]+)\}/g, (match, varName) => {
+        const val = envVars[varName] || process.env[varName] || '';
+        if (val.startsWith('sk-')) {
+          return 'https://api.xiaomimimo.com/v1';
+        } else {
+          return 'https://token-plan-sgp.xiaomimimo.com/v1';
+        }
+      });
+      
       await fs.writeFile(opencodeJsonPath, opencodeContent, 'utf-8');
       
       const globalConfigDir = path.join(process.env.HOME || '/home/srvdes', '.config', 'opencode');

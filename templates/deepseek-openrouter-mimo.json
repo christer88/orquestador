@@ -1,0 +1,23 @@
+{
+  "name": "DeepSeek (OR) + Xiaomi MiMo",
+  "description": "Combina la inteligencia de DeepSeek Pro y Flash (vía OpenRouter) con los modelos de Xiaomi MiMo (API Pay-as-you-go).",
+  "providers": ["openrouter", "xiaomi"],
+  "accounts": {
+    "openrouter": [{ "id": "openrouter-1", "label": "OpenRouter" }],
+    "xiaomi": [{ "id": "xiaomi-2", "label": "Xiaomi MiMo Pay-as-you-go" }]
+  },
+  "agents": {
+    "sisyphus": { "model": "deepseek-v4-pro", "source": "openrouter-1", "fallbacks": [] },
+    "hephaestus": { "model": "mimo-v2.5-pro", "source": "xiaomi-2", "fallbacks": [] },
+    "oracle": { "model": "mimo-v2-omni", "source": "xiaomi-2", "fallbacks": [] },
+    "librarian": { "model": "deepseek-v4-flash", "source": "openrouter-1", "fallbacks": [] },
+    "explore": { "model": "mimo-v2-flash", "source": "xiaomi-2", "fallbacks": [] },
+    "multimodal-looker": { "model": "mimo-v2-omni", "source": "xiaomi-2", "fallbacks": [] },
+    "prometheus": { "model": "deepseek-v4-pro", "source": "openrouter-1", "fallbacks": [] },
+    "metis": { "model": "deepseek-v4-pro", "source": "openrouter-1", "fallbacks": [] },
+    "momus": { "model": "deepseek-v4-flash", "source": "openrouter-1", "fallbacks": [] },
+    "atlas": { "model": "mimo-v2.5-pro", "source": "xiaomi-2", "fallbacks": [] },
+    "code-reviewer": { "model": "deepseek-v4-pro", "source": "openrouter-1", "fallbacks": [] },
+    "sisyphus-junior": { "model": "deepseek-v4-flash", "source": "openrouter-1", "fallbacks": [] }
+  }
+}

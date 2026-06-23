@@ -52,7 +52,8 @@
       "available_sources": [
         "opencode-go",
         "openrouter",
-        "moonshot"
+        "moonshot",
+        "nvidia"
       ],
       "context_window": 131072,
       "supports_tools": true,
@@ -333,7 +334,8 @@
       "rate_limits": {},
       "available_sources": [
         "opencode-go",
-        "openrouter"
+        "openrouter",
+        "nvidia"
       ],
       "context_window": 131072,
       "supports_tools": true,
@@ -756,6 +758,46 @@
       "supports_vision": false,
       "opencode_go_id": "qwen3.7-plus",
       "is_free": false
+    },
+    {
+      "id": "openai/gpt-oss-120b",
+      "name": "GPT OSS 120B",
+      "provider_origin": "openai",
+      "tier": 2,
+      "pricing": {
+        "input_per_million": 0,
+        "output_per_million": 0,
+        "currency": "USD"
+      },
+      "benchmarks": {},
+      "rate_limits": {},
+      "available_sources": [
+        "nvidia"
+      ],
+      "context_window": 16384,
+      "supports_tools": false,
+      "supports_vision": false,
+      "is_free": true
+    },
+    {
+      "id": "qwen/qwen3-next-80b-a3b-instruct",
+      "name": "Qwen 3 Next 80B Instruct",
+      "provider_origin": "qwen",
+      "tier": 2,
+      "pricing": {
+        "input_per_million": 0,
+        "output_per_million": 0,
+        "currency": "USD"
+      },
+      "benchmarks": {},
+      "rate_limits": {},
+      "available_sources": [
+        "nvidia"
+      ],
+      "context_window": 16384,
+      "supports_tools": false,
+      "supports_vision": false,
+      "is_free": true
     }
   ]
 }
