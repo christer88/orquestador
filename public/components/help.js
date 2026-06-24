@@ -15,7 +15,7 @@ export default {
         <div class="main-content__header" style="display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-4); border-bottom: 1px solid var(--border); padding-bottom: var(--space-4);">
           <div>
             <h2 class="main-content__title">📖 Ayuda y Documentación</h2>
-            <p class="main-content__subtitle">Guías oficiales de funcionamiento del Orquestador VibeCoding y los Agentes OmO.</p>
+            <p class="main-content__subtitle">Guías oficiales de funcionamiento del CoreVCO y los Agentes OmO.</p>
           </div>
           
           <!-- GitHub Card (Glassmorphic) -->

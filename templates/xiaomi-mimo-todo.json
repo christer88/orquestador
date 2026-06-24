@@ -1,10 +1,8 @@
 {
-  "name": "Ultimate Mix: Composer + Cavoti + DeepSeek + MiMo",
-  "description": "Mezcla de Composer (GPT-5.5 ), Cavoti, DeepSeek Flash (OpenCode) y MiMo Pro (Xiaomi).",
+  "name": "Xiaomi MiMo Todo",
+  "description": "Plantilla enfocada exclusivamente en los modelos MiMo de Xiaomi.",
   "providers": [
-    "opencode-go",
-    "xiaomi",
-    "cavoti"
+    "xiaomi"
   ],
   "accounts": {
     "opencode-go": [
@@ -40,63 +38,63 @@
   },
   "agents": {
     "sisyphus": {
-      "model": "grok-composer-2.5-fast",
-      "source": "cavoti-1",
+      "model": "mimo-v2.5-pro",
+      "source": "603a2409-8dc0-4b97-8afb-c5b41dce707e",
       "fallbacks": []
     },
     "hephaestus": {
-      "model": "grok-composer-2.5-fast",
-      "source": "cavoti-1",
+      "model": "mimo-v2.5-pro",
+      "source": "603a2409-8dc0-4b97-8afb-c5b41dce707e",
       "fallbacks": []
     },
     "oracle": {
-      "model": "deepseek-v4-flash",
-      "source": "opencode-go-1",
+      "model": "mimo-v2-omni",
+      "source": "603a2409-8dc0-4b97-8afb-c5b41dce707e",
       "fallbacks": []
     },
     "librarian": {
-      "model": "deepseek-v4-flash",
-      "source": "opencode-go-1",
+      "model": "mimo-v2.5-pro",
+      "source": "603a2409-8dc0-4b97-8afb-c5b41dce707e",
       "fallbacks": []
     },
     "explore": {
       "model": "mimo-v2.5-pro",
-      "source": "xiaomi-1",
+      "source": "603a2409-8dc0-4b97-8afb-c5b41dce707e",
       "fallbacks": []
     },
     "multimodal-looker": {
       "model": "mimo-v2-omni",
-      "source": "xiaomi-1",
+      "source": "603a2409-8dc0-4b97-8afb-c5b41dce707e",
       "fallbacks": []
     },
     "prometheus": {
-      "model": "grok-composer-2.5-fast",
-      "source": "cavoti-1",
+      "model": "mimo-v2.5-pro",
+      "source": "603a2409-8dc0-4b97-8afb-c5b41dce707e",
       "fallbacks": []
     },
     "metis": {
-      "model": "mimo-v2.5-pro",
-      "source": "xiaomi-1",
+      "model": "mimo-v2-omni",
+      "source": "603a2409-8dc0-4b97-8afb-c5b41dce707e",
       "fallbacks": []
     },
     "momus": {
-      "model": "deepseek-v4-flash",
-      "source": "opencode-go-1",
+      "model": "mimo-v2.5-pro",
+      "source": "603a2409-8dc0-4b97-8afb-c5b41dce707e",
       "fallbacks": []
     },
     "atlas": {
-      "model": "grok-composer-2.5-fast",
-      "source": "cavoti-1",
+      "model": "mimo-v2.5-pro",
+      "source": "603a2409-8dc0-4b97-8afb-c5b41dce707e",
       "fallbacks": []
     },
     "code-reviewer": {
-      "model": "grok-composer-2.5-fast",
-      "source": "cavoti-1",
+      "model": "mimo-v2-omni",
+      "source": "603a2409-8dc0-4b97-8afb-c5b41dce707e",
       "fallbacks": []
     },
     "sisyphus-junior": {
-      "model": "deepseek-v4-flash",
-      "source": "opencode-go-1",
+      "model": "mimo-v2.5-pro",
+      "source": "603a2409-8dc0-4b97-8afb-c5b41dce707e",
       "fallbacks": []
     }
   },

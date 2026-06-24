@@ -1,5 +1,5 @@
 /**
- * Router y State Management para Orquestador VibeCoding
+ * Router y State Management para CoreVCO
  */
 
 const state = {
