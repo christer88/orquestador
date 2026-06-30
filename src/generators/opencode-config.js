@@ -43,18 +43,6 @@ const PROVIDER_MODELS = {
   'minimax': {
     'minimax-m3': 'MiniMax M3'
   },
-  'commandcode': {
-    'deepseek-v4-pro': 'DeepSeek V4 Pro',
-    'deepseek-v4-flash': 'DeepSeek V4 Flash',
-    'kimi-k2.6': 'Kimi K2.6',
-    'kimi-k2.7': 'Kimi K2.7 Code',
-    'glm-5.1': 'GLM-5.1',
-    'glm-5.2': 'GLM-5.2',
-    'qwen3.6-plus': 'Qwen 3.6 Plus',
-    'qwen3.7-plus': 'Qwen 3.7 Plus',
-    'mimo-v2.5-pro': 'MiMo V2.5 Pro',
-    'minimax-m3': 'MiniMax M3'
-  },
   'nvidia': {
     'nvidia/nemotron-3-super-120b-a12b': 'Nemotron-3 Super 120B',
     'nvidia/nemotron-3-ultra-550b-a55b': 'Nemotron-3 Ultra 550B',
@@ -67,25 +55,28 @@ const PROVIDER_MODELS = {
     'moonshotai/kimi-k2.6': 'Kimi K2.6'
   },
   'cavoti': {
-    'kimi-k2.6': 'Kimi K2.6',
-    'deepseek-v4-flash': 'DeepSeek V4 Flash',
-    'deepseek-v4-pro': 'DeepSeek V4 Pro',
-    'glm-5.1': 'GLM-5.1',
-    'qwen3.6-plus': 'Qwen 3.6 Plus',
-    'gpt-5.5-pro': 'gpt-5.5-pro',
-    'gpt-5.5': 'gpt-5.5',
-    'gpt-5.4': 'gpt-5.4',
-    'gpt-5.4-mini': 'gpt-5.4-mini',
-    'gpt-5.3-codex-spark': 'gpt-5.3-codex-spark',
-    'grok-4.3': 'grok-4.3',
-    'grok-build-0.1': 'grok-build-0.1',
-    'grok-composer-2.5-fast': 'grok-composer-2.5-fast',
-    'opus-4-8': 'opus-4-8',
-    'opus-4-7': 'opus-4-7',
-    'opus-4-6': 'opus-4-6',
-    'sonnet-4-6': 'sonnet-4-6',
-    'haiku-4-5': 'haiku-4-5'
+    'gpt-5.5': 'GPT-5.5',
+    'gpt-5.4': 'GPT-5.4',
+    'gpt-5.4-mini': 'GPT-5.4 Mini',
+    'codex-auto-review': 'Codex Auto Review',
+    'claude-haiku-4-5': 'Claude Haiku 4.5',
+    'claude-haiku-4-5-20251001': 'Claude Haiku 4.5 (2025-10-01)',
+    'claude-opus-4-5': 'Claude Opus 4.5',
+    'claude-opus-4-5-20251101': 'Claude Opus 4.5 (2025-11-01)',
+    'claude-opus-4-6': 'Claude Opus 4.6',
+    'claude-opus-4-7': 'Claude Opus 4.7',
+    'claude-opus-4-8': 'Claude Opus 4.8',
+    'claude-sonnet-4-5-20250929': 'Claude Sonnet 4.5 (2025-09-29)',
+    'claude-sonnet-4-6': 'Claude Sonnet 4.6'
   }
+};
+
+// ═══ Cavoti Model Metadata (limits, variants, options) ═══
+const CAVOTI_MODEL_META = {
+  'codex-auto-review': { limit: { context: 200000, output: 64000 }, variants: ['low','medium','high'] },
+  'gpt-5.5': { limit: { context: 1050000, output: 128000 }, variants: ['low','medium','high','xhigh'] },
+  'gpt-5.4': { limit: { context: 1050000, output: 128000 }, variants: ['low','medium','high','xhigh'] },
+  'gpt-5.4-mini': { limit: { context: 400000, output: 128000 }, variants: ['low','medium','high','xhigh'] }
 };
 
 export async function generate(projectConfig) {
@@ -128,11 +119,6 @@ export async function generate(projectConfig) {
       } else if (providerId === 'minimax') {
         providerConfig.api = 'openai';
         providerConfig.options.baseURL = "https://api.minimax.chat/v1";
-      } else if (providerId === 'commandcode') {
-        providerConfig.api = 'openai';
-        // NOTA: requiere plan Provider en commandcode.ai/billing
-        // Los IDs de modelo deben tener prefijo: deepseek/deepseek-v4-pro, moonshotai/Kimi-K2.6, etc.
-        providerConfig.options.baseURL = "https://api.commandcode.ai/provider/v1";
       } else if (providerId === 'opencode-go') {
         providerConfig.api = 'openai';
         providerConfig.options.baseURL = "https://opencode.ai/zen/go/v1";
@@ -156,19 +142,25 @@ export async function generate(projectConfig) {
         providerConfig.options.baseURL = "https://integrate.api.nvidia.com/v1";
       } else if (providerId === 'cavoti') {
         providerConfig.api = 'openai';
-        const label = (acc.label || '').toLowerCase();
-        const envKey = (acc.envKey || '').toLowerCase();
-        const isSingapore = label.includes('sg') || 
-                            label.includes('singapore') || 
-                            label.includes('singapur') || 
-                            envKey.includes('sg') || 
-                            envKey.includes('singapore') || 
-                            envKey.includes('singapur') ||
-                            acc.id.endsWith('-2');
-        if (isSingapore) {
-          providerConfig.options.baseURL = "https://sg.cavoti.com/v1";
-        } else {
-          providerConfig.options.baseURL = "https://us.cavoti.com/v1";
+        providerConfig.options.baseURL = "https://cavoti.com/v1";
+        // User explicitly requested these keys for Cavoti GPT vs Claude
+        providerConfig.options.apiKey = process.env.CAVOTI_GPT_KEY || "{env:CAVOTI_GPT_KEY}";
+
+        const CLAUDE_MODELS = ['claude-haiku-4-5', 'claude-haiku-4-5-20251001', 'claude-opus-4-5', 'claude-opus-4-5-20251101', 'claude-opus-4-6', 'claude-opus-4-7', 'claude-opus-4-8', 'claude-sonnet-4-5-20250929', 'claude-sonnet-4-6'];
+        // If account specifies models, use that list; otherwise assume all provider models are available
+        const accModelList = acc.models && acc.models.length ? acc.models : Object.keys(PROVIDER_MODELS['cavoti'] || {});
+        const hasClaude = accModelList.some(m => CLAUDE_MODELS.includes(m));
+        if (hasClaude) {
+          config.provider[`${acc.id}-claude`] = {
+            api: 'openai',
+            options: {
+              apiKey: process.env.CAVOTI_CLAUDE_KEY || "{env:CAVOTI_CLAUDE_KEY}",
+              baseURL: "https://cavoti.com/v1",
+              setCacheKey: projectConfig.cacheOptimization || false,
+              headers: projectConfig.cacheOptimization ? { "x-session-id": "{env:PROJECT_CACHE_ID}" } : {}
+            },
+            models: {}
+          };
         }
       } else if (providerId.startsWith('custom-')) {
         // Fallback dinámico si se requiere
@@ -199,18 +191,6 @@ export async function generate(projectConfig) {
           else if (modelId === 'mimo-v2.5-pro') realModelId = 'xiaomi/mimo-v2.5-pro';
           else if (modelId === 'mimo-v2-flash') realModelId = 'xiaomi/mimo-v2-flash';
           else if (modelId === 'minimax-m3') realModelId = 'minimax/minimax-m3';
-        } else if (providerId === 'commandcode') {
-          // CommandCode requiere IDs con prefijo del proveedor original
-          if (modelId === 'deepseek-v4-pro') realModelId = 'deepseek/deepseek-v4-pro';
-          else if (modelId === 'deepseek-v4-flash') realModelId = 'deepseek/deepseek-v4-flash';
-          else if (modelId === 'kimi-k2.6') realModelId = 'moonshotai/Kimi-K2.6';
-          else if (modelId === 'kimi-k2.7') realModelId = 'moonshotai/Kimi-K2.7-Code';
-          else if (modelId === 'glm-5.1') realModelId = 'zai-org/GLM-5.1';
-          else if (modelId === 'glm-5.2') realModelId = 'zai-org/GLM-5.2';
-          else if (modelId === 'qwen3.6-plus') realModelId = 'Qwen/Qwen3.6-Plus';
-          else if (modelId === 'qwen3.7-plus') realModelId = 'Qwen/Qwen3.7-Plus';
-          else if (modelId === 'mimo-v2.5-pro') realModelId = 'xiaomi/mimo-v2.5-pro';
-          else if (modelId === 'minimax-m3') realModelId = 'MiniMaxAI/MiniMax-M3';
         }
         
         if (providerId === 'opencode-go' && ANTHROPIC_MODELS.includes(modelId)) {
@@ -220,11 +200,30 @@ export async function generate(projectConfig) {
               name: modelName
             };
           }
+        } else if (providerId === 'cavoti' && ['claude-haiku-4-5', 'claude-haiku-4-5-20251001', 'claude-opus-4-5', 'claude-opus-4-5-20251101', 'claude-opus-4-6', 'claude-opus-4-7', 'claude-opus-4-8', 'claude-sonnet-4-5-20250929', 'claude-sonnet-4-6'].includes(modelId)) {
+          if (config.provider[`${acc.id}-claude`]) {
+            config.provider[`${acc.id}-claude`].models[modelId] = {
+              id: realModelId,
+              name: modelName
+            };
+          }
         } else {
-          providerConfig.models[modelId] = {
+          const modelEntry = {
             id: realModelId,
             name: modelName
           };
+          // Enriched metadata for Cavoti GPT models (limit, variants, options.store)
+          if (providerId === 'cavoti' && CAVOTI_MODEL_META[modelId]) {
+            const meta = CAVOTI_MODEL_META[modelId];
+            modelEntry.limit = meta.limit;
+            modelEntry.options = { store: false };
+            const variantObj = {};
+            if (meta.variants && Array.isArray(meta.variants)) {
+              for (const v of meta.variants) variantObj[v] = {};
+            }
+            modelEntry.variants = variantObj;
+          }
+          providerConfig.models[modelId] = modelEntry;
         }
       }
       
