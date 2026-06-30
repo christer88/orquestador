@@ -1,24 +1,24 @@
 {
   "name": "Ultimate Mix: Composer + Cavoti + DeepSeek + MiMo",
-  "description": "Mezcla de Composer (GPT-5.5 Pro), Cavoti, DeepSeek Flash (OpenCode) y MiMo Pro (Xiaomi).",
+  "description": "Mezcla de Composer (GPT-5.5), Cavoti, DeepSeek Flash (OpenCode) y MiMo Pro (Xiaomi).",
   "providers": ["cavoti", "opencode-go", "xiaomi"],
   "accounts": {
-    "cavoti": [{ "id": "cavoti-1", "label": "Cavoti Americas" }],
+    "cavoti": [{ "id": "cavoti-1", "label": "Cavoti GPT" }],
     "opencode-go": [{ "id": "opencode-go-1", "label": "OpenCode Go" }],
     "xiaomi": [{ "id": "xiaomi-1", "label": "Xiaomi" }]
   },
   "agents": {
-    "sisyphus": { "model": "gpt-5.5-pro", "source": "cavoti-1", "fallbacks": [] },
+    "sisyphus": { "model": "gpt-5.5", "source": "cavoti-1", "fallbacks": [] },
     "hephaestus": { "model": "gpt-5.5", "source": "cavoti-1", "fallbacks": [] },
     "oracle": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
     "librarian": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
     "explore": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [] },
-    "multimodal-looker": { "model": "mimo-v2-omni", "source": "xiaomi-1", "fallbacks": [] },
-    "prometheus": { "model": "gpt-5.5-pro", "source": "cavoti-1", "fallbacks": [] },
+    "multimodal-looker": { "model": "mimo-v2.5", "source": "xiaomi-1", "fallbacks": [] },
+    "prometheus": { "model": "gpt-5.5", "source": "cavoti-1", "fallbacks": [] },
     "metis": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [] },
     "momus": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
     "atlas": { "model": "gpt-5.5", "source": "cavoti-1", "fallbacks": [] },
-    "code-reviewer": { "model": "gpt-5.5-pro", "source": "cavoti-1", "fallbacks": [] },
+    "code-reviewer": { "model": "gpt-5.5", "source": "cavoti-1", "fallbacks": [] },
     "sisyphus-junior": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] }
   }
 }

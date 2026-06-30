@@ -1,23 +1,26 @@
 {
   "name": "Orquestador Fuerte + Agentes Baratos",
-  "description": "Combina un orquestador de pensamiento fuerte (Opus 4.8 / DeepSeek Pro) con agentes baratos (DeepSeek Flash / GPT Mini) para ejecución.",
+  "description": "Combina un orquestador de pensamiento fuerte (Claude Opus 4.8 / DeepSeek Pro) con agentes baratos (DeepSeek Flash / GPT Mini) para ejecución.",
   "providers": ["cavoti", "opencode-go"],
   "accounts": {
-    "cavoti": [{ "id": "cavoti-1", "label": "Cavoti Americas" }],
+    "cavoti": [
+      { "id": "cavoti-1", "label": "Cavoti GPT" },
+      { "id": "cavoti-2", "label": "Cavoti Claude" }
+    ],
     "opencode-go": [{ "id": "opencode-go-1", "label": "OpenCode Go" }]
   },
   "agents": {
-    "sisyphus": { "model": "opus-4-8", "source": "cavoti-1", "fallbacks": [] },
+    "sisyphus": { "model": "claude-opus-4-8", "source": "cavoti-2", "fallbacks": [] },
     "hephaestus": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
     "oracle": { "model": "gpt-5.4-mini", "source": "cavoti-1", "fallbacks": [] },
     "librarian": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
     "explore": { "model": "gpt-5.4-mini", "source": "cavoti-1", "fallbacks": [] },
     "multimodal-looker": { "model": "deepseek-v4-pro", "source": "opencode-go-1", "fallbacks": [] },
-    "prometheus": { "model": "opus-4-8", "source": "cavoti-1", "fallbacks": [] },
+    "prometheus": { "model": "claude-opus-4-8", "source": "cavoti-2", "fallbacks": [] },
     "metis": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
     "momus": { "model": "deepseek-v4-flash", "source": "opencode-go-1", "fallbacks": [] },
     "atlas": { "model": "deepseek-v4-pro", "source": "opencode-go-1", "fallbacks": [] },
-    "code-reviewer": { "model": "opus-4-8", "source": "cavoti-1", "fallbacks": [] },
+    "code-reviewer": { "model": "claude-opus-4-8", "source": "cavoti-2", "fallbacks": [] },
     "sisyphus-junior": { "model": "gpt-5.4-mini", "source": "cavoti-1", "fallbacks": [] }
   }
 }

@@ -22,10 +22,6 @@ export async function calculateMonthlyCost(projectConfig) {
     const numAccounts = (projectConfig.accounts['opencode-go'] || []).length;
     cost += 10 * Math.max(1, numAccounts);
   }
-  if (projectConfig.providers.includes('commandcode')) {
-    const numAccounts = (projectConfig.accounts['commandcode'] || []).length;
-    cost += 15 * Math.max(1, numAccounts); // asumiendo $15
-  }
   
   // APIs estimadas (uso variable)
   if (projectConfig.providers.includes('openrouter')) cost += 3.30;

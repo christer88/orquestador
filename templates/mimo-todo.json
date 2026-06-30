@@ -8,15 +8,15 @@
   "agents": {
     "sisyphus": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [] },
     "hephaestus": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [] },
-    "oracle": { "model": "mimo-v2-omni", "source": "xiaomi-1", "fallbacks": [] },
+    "oracle": { "model": "mimo-v2.5", "source": "xiaomi-1", "fallbacks": [] },
     "librarian": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [] },
     "explore": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [] },
-    "multimodal-looker": { "model": "mimo-v2-omni", "source": "xiaomi-1", "fallbacks": [] },
+    "multimodal-looker": { "model": "mimo-v2.5", "source": "xiaomi-1", "fallbacks": [] },
     "prometheus": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [] },
-    "metis": { "model": "mimo-v2-omni", "source": "xiaomi-1", "fallbacks": [] },
+    "metis": { "model": "mimo-v2.5", "source": "xiaomi-1", "fallbacks": [] },
     "momus": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [] },
     "atlas": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [] },
-    "code-reviewer": { "model": "mimo-v2-omni", "source": "xiaomi-1", "fallbacks": [] },
+    "code-reviewer": { "model": "mimo-v2.5", "source": "xiaomi-1", "fallbacks": [] },
     "sisyphus-junior": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [] }
   }
 }

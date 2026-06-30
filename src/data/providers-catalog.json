@@ -224,31 +224,6 @@
       }
     },
     {
-      "id": "commandcode",
-      "name": "CommandCode IA",
-      "description": "Herramienta CLI de codificación AI tipo CommandCode",
-      "type": "platform",
-      "endpoint": null,
-      "auth": {
-        "method": "api_key",
-        "env_key_pattern": "COMMANDCODE_{N}_API_KEY",
-        "auth_type": "env_variable",
-        "notes": "Configuración vía variables de entorno. Soporte multi-cuenta."
-      },
-      "multi_account": true,
-      "max_accounts": 3,
-      "rate_limit_strategy": "per_account",
-      "supported_models": [],
-      "config_format": "commandcode",
-      "model_prefix": null,
-      "features": {
-        "streaming": true,
-        "tool_use": true,
-        "vision": false,
-        "file_upload": true
-      }
-    },
-    {
       "id": "custom-siliconflow",
       "name": "SiliconFlow",
       "description": "Proveedor personalizado añadido manualmente",
@@ -271,13 +246,13 @@
     {
       "id": "cavoti",
       "name": "Cavoti",
-      "description": "Inferencia optimizada en la nube con nodos dedicados en Américas y Singapur",
+      "description": "API unificada OpenAI-compatible — keys separadas por tipo de modelo (GPT vs Claude)",
       "type": "api",
-      "endpoint": "https://us.cavoti.com/v1",
-      "testEndpoint": "https://us.cavoti.com/v1/models",
+      "endpoint": "https://cavoti.com/v1",
+      "testEndpoint": "https://cavoti.com/v1/models",
       "auth": {
         "method": "api_key",
-        "env_key_pattern": "CAVOTI_KEY{N}",
+        "env_key_pattern": "CAVOTI_{GPT|CLAUDE}_KEY",
         "auth_type": "bearer_token",
         "header": "Authorization"
       },
@@ -285,24 +260,19 @@
       "max_accounts": 3,
       "rate_limit_strategy": "per_account",
       "supported_models": [
-        "kimi-k2.6",
-        "deepseek-v4-flash",
-        "deepseek-v4-pro",
-        "glm-5.1",
-        "qwen3.6-plus",
-        "gpt-5.5-pro",
-        "gpt-5.5",
+        "codex-auto-review",
         "gpt-5.4",
         "gpt-5.4-mini",
-        "opus-4-8",
-        "opus-4-7",
-        "opus-4-6",
-        "sonnet-4-6",
-        "haiku-4-5",
-        "grok-4.3",
-        "grok-build-0.1",
-        "grok-composer-2.5-fast",
-        "gpt-5.3-codex-spark"
+        "gpt-5.5",
+        "claude-haiku-4-5",
+        "claude-haiku-4-5-20251001",
+        "claude-opus-4-5",
+        "claude-opus-4-5-20251101",
+        "claude-opus-4-6",
+        "claude-opus-4-7",
+        "claude-opus-4-8",
+        "claude-sonnet-4-5-20250929",
+        "claude-sonnet-4-6"
       ],
       "config_format": "openai_compatible",
       "model_prefix": null,

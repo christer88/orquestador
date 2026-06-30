@@ -130,14 +130,13 @@ export default {
 
       const defaults = [
         { id: 'opencode-go-1', label: 'Default OpenCode GO' },
-        { id: 'commandcode-1', label: 'Default CommandCode IA' },
         { id: 'xiaomi-1', label: 'Default Xiaomi MiMo' },
         { id: 'openrouter-1', label: 'Default OpenRouter' },
         { id: 'deepseek-api-1', label: 'Default DeepSeek API' },
         { id: 'moonshot-1', label: 'Default Moonshot AI' },
         { id: 'minimax-1', label: 'Default MiniMax' },
-        { id: 'cavoti-1', label: 'Default Cavoti Americas' },
-        { id: 'cavoti-2', label: 'Default Cavoti Singapore' }
+        { id: 'cavoti-1', label: 'Cavoti GPT' },
+        { id: 'cavoti-2', label: 'Cavoti Claude' }
       ];
 
       defaults.forEach(d => {
@@ -353,10 +352,9 @@ export default {
         providers: providersChecked,
         accounts: {
           'opencode-go': [{ id: 'opencode-go-1', label: 'Cuenta Principal' }],
-          'commandcode': [{ id: 'commandcode-1', label: 'Cuenta Principal' }],
           'xiaomi': [{ id: 'xiaomi-1', label: 'Cuenta Principal' }],
           'openrouter': [{ id: 'openrouter-1', label: 'OpenRouter' }],
-          'cavoti': [{ id: 'cavoti-1', label: 'Cavoti Americas' }]
+          'cavoti': [{ id: 'cavoti-1', label: 'Cavoti GPT' }]
         },
         agents: agents
       };

@@ -21,9 +21,15 @@ export async function generate(projectConfig) {
 
   // Populate agents
   const ANTHROPIC_MODELS = ['minimax-m3', 'minimax-m2.7', 'minimax-m2.5', 'qwen3.7-max', 'qwen3.7-plus', 'qwen3.6-plus'];
+  const CLAUDE_MODELS = ['claude-haiku-4-5', 'claude-haiku-4-5-20251001', 'claude-opus-4-5', 'claude-opus-4-5-20251101', 'claude-opus-4-6', 'claude-opus-4-7', 'claude-opus-4-8', 'claude-sonnet-4-5-20250929', 'claude-sonnet-4-6'];
   const resolveSource = (source, model) => {
+    // OpenCode GO: ciertos modelos usan API Anthropic, necesitan sufijo -anthropic
     if (source && source.startsWith('opencode-go') && ANTHROPIC_MODELS.includes(model)) {
       return `${source}-anthropic`;
+    }
+    // Cavoti: modelos Claude usan API key separada, necesitan sufijo -claude
+    if (source && source.startsWith('cavoti') && CLAUDE_MODELS.includes(model)) {
+      return `${source}-claude`;
     }
     return source;
   };

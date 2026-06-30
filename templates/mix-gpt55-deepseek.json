@@ -3,7 +3,7 @@
   "description": "Cavoti GPT-5.5 combinado con DeepSeek Pro y Flash de OpenCode Go.",
   "providers": ["cavoti", "opencode-go"],
   "accounts": {
-    "cavoti": [{ "id": "cavoti-1", "label": "Cavoti Americas" }],
+    "cavoti": [{ "id": "cavoti-1", "label": "Cavoti GPT" }],
     "opencode-go": [{ "id": "opencode-go-1", "label": "OpenCode Go" }]
   },
   "agents": {
