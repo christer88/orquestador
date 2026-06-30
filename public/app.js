@@ -95,8 +95,21 @@ export function showToast(message, type = 'info') {
 
 window.addEventListener('hashchange', handleRoute);
 
+async function fetchVersion() {
+  try {
+    const res = await api.get('/system/version');
+    if (res && res.version) {
+      const el = document.getElementById('app-version-display');
+      if (el) el.textContent = res.version;
+    }
+  } catch (e) {
+    console.warn('No se pudo cargar la versión del sistema', e);
+  }
+}
+
 // Init
 loadData().then(() => {
   if (!window.location.hash) window.location.hash = '#dashboard';
   handleRoute();
 });
+fetchVersion();

@@ -23,7 +23,10 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import archiver from 'archiver';
 import multer from 'multer';
 import unzipper from 'unzipper';
+import { exec } from 'node:child_process';
+import { promisify } from 'node:util';
 
+const execAsync = promisify(exec);
 // ─── Configuración de rutas base ──────────────────────────────
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -104,6 +107,26 @@ app.use(express.urlencoded({ extended: true }));
 
 // Servir archivos estáticos desde public/
 app.use(express.static(DIRS.public));
+
+// ═══════════════════════════════════════════════════════════════
+// SISTEMA Y METADATOS
+// ═══════════════════════════════════════════════════════════════
+
+app.get('/api/system/version', asyncHandler(async (req, res) => {
+  try {
+    const { stdout } = await execAsync('git rev-list --count HEAD', { cwd: __dirname });
+    let count = parseInt(stdout.trim(), 10) || 0;
+    // Base inicial (count 27 -> v1.11 -> offset 84)
+    count += 84; 
+    const major = Math.floor(count / 100);
+    const minor = count % 100;
+    const version = `v${major}.${minor}`;
+    res.json({ ok: true, version });
+  } catch (err) {
+    console.error('Error obteniendo versión de Git:', err);
+    res.json({ ok: true, version: 'v1.1' });
+  }
+}));
 
 // ═══════════════════════════════════════════════════════════════
 // CATÁLOGOS DE DATOS (cargados bajo demanda)
