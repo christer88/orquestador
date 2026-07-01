@@ -130,7 +130,8 @@ export default {
 
       const defaults = [
         { id: 'opencode-go-1', label: 'Default OpenCode GO' },
-        { id: 'xiaomi-1', label: 'Default Xiaomi MiMo' },
+        { id: 'xiaomi-1', label: 'Default Xiaomi MiMo (Token Plan)' },
+        { id: 'xiaomi-2', label: 'Default Xiaomi API Credits' },
         { id: 'openrouter-1', label: 'Default OpenRouter' },
         { id: 'deepseek-api-1', label: 'Default DeepSeek API' },
         { id: 'moonshot-1', label: 'Default Moonshot AI' },
