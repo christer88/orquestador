@@ -1,22 +1,25 @@
 {
   "name": "Xiaomi MiMo Todo",
-  "description": "Plantilla enfocada exclusivamente en los modelos MiMo de Xiaomi.",
+  "description": "Plantilla enfocada exclusivamente en los modelos MiMo de Xiaomi. Usa Token Plan como principal y API Credits como fallback.",
   "providers": ["xiaomi"],
   "accounts": {
-    "xiaomi": [{ "id": "xiaomi-1", "label": "Cuenta Principal" }]
+    "xiaomi": [
+      { "id": "xiaomi-1", "label": "Token Plan (Principal)", "envKey": "XIAOMI_1_API_KEY" },
+      { "id": "xiaomi-2", "label": "API Credits (Respaldo)", "envKey": "XIAOMI_2_API_KEY" }
+    ]
   },
   "agents": {
-    "sisyphus": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [] },
-    "hephaestus": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [] },
-    "oracle": { "model": "mimo-v2.5", "source": "xiaomi-1", "fallbacks": [] },
-    "librarian": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [] },
-    "explore": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [] },
-    "multimodal-looker": { "model": "mimo-v2.5", "source": "xiaomi-1", "fallbacks": [] },
-    "prometheus": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [] },
-    "metis": { "model": "mimo-v2.5", "source": "xiaomi-1", "fallbacks": [] },
-    "momus": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [] },
-    "atlas": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [] },
-    "code-reviewer": { "model": "mimo-v2.5", "source": "xiaomi-1", "fallbacks": [] },
-    "sisyphus-junior": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [] }
+    "sisyphus": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [{ "model": "mimo-v2.5-pro", "source": "xiaomi-2" }] },
+    "hephaestus": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [{ "model": "mimo-v2.5-pro", "source": "xiaomi-2" }] },
+    "oracle": { "model": "mimo-v2.5", "source": "xiaomi-1", "fallbacks": [{ "model": "mimo-v2.5", "source": "xiaomi-2" }] },
+    "librarian": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [{ "model": "mimo-v2.5-pro", "source": "xiaomi-2" }] },
+    "explore": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [{ "model": "mimo-v2.5-pro", "source": "xiaomi-2" }] },
+    "multimodal-looker": { "model": "mimo-v2.5", "source": "xiaomi-1", "fallbacks": [{ "model": "mimo-v2.5", "source": "xiaomi-2" }] },
+    "prometheus": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [{ "model": "mimo-v2.5-pro", "source": "xiaomi-2" }] },
+    "metis": { "model": "mimo-v2.5", "source": "xiaomi-1", "fallbacks": [{ "model": "mimo-v2.5", "source": "xiaomi-2" }] },
+    "momus": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [{ "model": "mimo-v2.5-pro", "source": "xiaomi-2" }] },
+    "atlas": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [{ "model": "mimo-v2.5-pro", "source": "xiaomi-2" }] },
+    "code-reviewer": { "model": "mimo-v2.5", "source": "xiaomi-1", "fallbacks": [{ "model": "mimo-v2.5", "source": "xiaomi-2" }] },
+    "sisyphus-junior": { "model": "mimo-v2.5-pro", "source": "xiaomi-1", "fallbacks": [{ "model": "mimo-v2.5-pro", "source": "xiaomi-2" }] }
   }
 }
