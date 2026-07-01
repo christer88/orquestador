@@ -147,7 +147,7 @@ export async function generate(projectConfig) {
         providerConfig.api = 'openai';
         providerConfig.options.baseURL = "https://cavoti.com/v1";
         // User explicitly requested these keys for Cavoti GPT vs Claude
-        providerConfig.options.apiKey = process.env.CAVOTI_GPT_KEY || "{env:CAVOTI_GPT_KEY}";
+        providerConfig.options.apiKey = process.env.CAVOTI_GPT_KEY || `{env:CAVOTI_GPT_KEY}`;
 
         const CLAUDE_MODELS = ['claude-haiku-4-5', 'claude-haiku-4-5-20251001', 'claude-opus-4-5', 'claude-opus-4-5-20251101', 'claude-opus-4-6', 'claude-opus-4-7', 'claude-opus-4-8', 'claude-sonnet-4-5-20250929', 'claude-sonnet-4-6'];
         // If account specifies models, use that list; otherwise assume all provider models are available
@@ -157,7 +157,7 @@ export async function generate(projectConfig) {
           config.provider[`${acc.id}-claude`] = {
             api: 'openai',
             options: {
-              apiKey: process.env.CAVOTI_CLAUDE_KEY || "{env:CAVOTI_CLAUDE_KEY}",
+              apiKey: process.env.CAVOTI_CLAUDE_KEY || `{env:CAVOTI_CLAUDE_KEY}`,
               baseURL: "https://cavoti.com/v1",
               setCacheKey: projectConfig.cacheOptimization || false,
               headers: projectConfig.cacheOptimization ? { "x-session-id": "{env:PROJECT_CACHE_ID}" } : {}
