@@ -1660,10 +1660,14 @@ app.post('/api/proxy/:projectId/:accountId/chat/completions', asyncHandler(async
   const { apiKey, baseURL } = config;
   const targetUrl = `${baseURL}/chat/completions`;
   
-  // Clonar cabeceras, inyectando la clave del proveedor correspondiente
-  const headers = { ...req.headers };
-  delete headers.host;
-  delete headers['content-length'];
+  // Filtrar cabeceras para evitar duplicados y conflictos de autorización
+  const headers = {};
+  for (const [key, value] of Object.entries(req.headers)) {
+    const lowerKey = key.toLowerCase();
+    if (lowerKey !== 'host' && lowerKey !== 'content-length' && lowerKey !== 'authorization') {
+      headers[key] = value;
+    }
+  }
   headers['Authorization'] = `Bearer ${apiKey}`;
   headers['Content-Type'] = 'application/json';
   
@@ -1773,6 +1777,8 @@ app.get('/api/stats/token-logs', asyncHandler(async (req, res) => {
   const logs = await leerJSON(logFile) || [];
   res.json({ ok: true, logs });
 }));
+
+
 
 /**
  * Ruta catch-all para 404 en la API
