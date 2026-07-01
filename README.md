@@ -9,7 +9,10 @@ Genera automáticamente archivos de ruteo (`oh-my-openagent.json`), configuraci�
 ## ✨ Características Principales
 
 *   **Multi-Proveedor & Multi-Cuenta**: Configura múltiples proveedores (OpenCode Go, OpenRouter, Xiaomi MiMo, CommandCode, DeepSeek API, etc.) y múltiples cuentas/suscripciones por proveedor (ej. `opencode-go-1`, `opencode-go-2`) para duplicar o triplicar tus límites (Rate Limits).
-*   **Gestor de Cuentas Integrado**: Administra visualmente tus API Keys y credenciales directamente desde la interfaz web. Incluye pruebas de conectividad en tiempo real para verificar si una llave está activa.
+*   **Proxy Reverso & Conteo de Tokens**: Todas las llamadas de los agentes se enrutan automáticamente a través de un proxy local transparente. Soporta lectura y parseo de eventos de **streaming (SSE)** para llevar un conteo exacto de tokens de entrada (prompt) y salida (completions).
+*   **Gestor de Gastos y Costos Financieros**: Calcula automáticamente el costo monetario en USD de cada llamada de IA basándose en las tarifas del catálogo de modelos.
+*   **Dashboard Visual Premium**: Panel interactivo ("Métricas y Gastos") con gráficos estadísticos (Chart.js) que desglosa el consumo acumulado de tokens por modelo y el gasto por cuenta de proveedor utilizada (ej. diferenciando entre *Xiaomi Token Plan* y *Xiaomi API Credits*).
+*   **Gestor de Cuentas con Test Inteligente**: Administra visualmente tus claves. El botón de probar conexión conmuta dinámicamente el endpoint para validar llaves de subscripción (`tp-xxx`) o saldo por consumo (`sk-xxx`) sin falsos negativos.
 *   **Motor de Fallbacks Avanzado**: Ruteo inteligente y conmutación automática entre cuentas del mismo proveedor y entre proveedores de respaldo (ej. `opencode-go-1` ➡️ `opencode-go-2` ➡️ `openrouter`).
 *   **Módulo de Ayuda y Documentación Integrada**: Accede directamente desde la interfaz web a los manuales del sistema y las guías descriptivas de agentes generadas para cada uno de tus proyectos, con enlaces rápidos al repositorio de GitHub.
 *   **Catálogo de Agentes OmO**: Configura los 11 agentes de Oh My OpenAgent sugiriendo modelos y tiers óptimos para cada tarea (razonamiento, utilidades, orquestación, etc.).
