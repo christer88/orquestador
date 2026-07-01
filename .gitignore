@@ -10,3 +10,5 @@ templates/asdas.json
 dist/
 build/
 proyecto-*/
+src/data/token-logs.json
+
