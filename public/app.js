@@ -79,6 +79,8 @@ function handleRoute() {
     import('./components/account-manager-ui.js').then(m => m.default.render(content));
   } else if (hash === '#templates') {
     import('./components/templates-ui.js').then(m => m.default.render(content));
+  } else if (hash === '#costs') {
+    import('./components/costs.js').then(m => m.default.render(content));
   } else {
     content.innerHTML = `<h2>Vista no encontrada</h2>`;
   }

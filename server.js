@@ -1513,6 +1513,255 @@ app.use((err, req, res, _next) => {
   });
 });
 
+// ═══════════════════════════════════════════════════════════════
+// PROXY DE APIS Y REGISTRO DE CONSUMOS (Métricas y Gastos)
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Resuelve las credenciales y URL real de una cuenta específica
+ */
+async function getAccountRealConfig(accountId) {
+  const accounts = await leerJSON(path.join(DIRS.data, 'accounts.json')) || [];
+  
+  let acc = null;
+  
+  // Analizar si accountId es de la forma "proveedor-secuencia" (ej: xiaomi-1, opencode-go-2)
+  const lastHyphenIndex = accountId.lastIndexOf('-');
+  if (lastHyphenIndex !== -1) {
+    const providerId = accountId.substring(0, lastHyphenIndex);
+    const seqStr = accountId.substring(lastHyphenIndex + 1);
+    const seqNum = parseInt(seqStr, 10);
+    
+    if (!isNaN(seqNum)) {
+      // Filtrar las cuentas activas para este proveedor
+      const providerAccounts = accounts.filter(a => a.provider === providerId && a.active !== false);
+      const idx = seqNum - 1;
+      if (idx >= 0 && idx < providerAccounts.length) {
+        acc = providerAccounts[idx];
+      }
+    }
+  }
+  
+  // Fallback si no coincide con el patrón secuencial, buscar por ID directo (UUID)
+  if (!acc) {
+    acc = accounts.find(a => a.id === accountId);
+  }
+  
+  if (!acc) return null;
+  
+  const apiKey = acc.envKey ? process.env[acc.envKey] : null;
+  let baseURL = '';
+  
+  if (acc.provider === 'openrouter') {
+    baseURL = 'https://openrouter.ai/api/v1';
+  } else if (acc.provider === 'deepseek-api') {
+    baseURL = 'https://api.deepseek.com';
+  } else if (acc.provider === 'moonshot') {
+    baseURL = 'https://api.moonshot.ai/v1';
+  } else if (acc.provider === 'xiaomi') {
+    if (apiKey && apiKey.startsWith('sk-')) {
+      baseURL = 'https://api.xiaomimimo.com/v1';
+    } else {
+      baseURL = 'https://token-plan-sgp.xiaomimimo.com/v1';
+    }
+  } else if (acc.provider === 'cavoti') {
+    baseURL = 'https://cavoti.com/v1';
+  } else if (acc.provider === 'nvidia') {
+    baseURL = 'https://integrate.api.nvidia.com/v1';
+  } else if (acc.provider === 'opencode-go') {
+    baseURL = 'https://opencode.ai/zen/go/v1';
+  } else {
+    baseURL = 'https://api.openai.com/v1';
+  }
+  
+  return { apiKey, baseURL, provider: acc.provider, label: acc.label };
+}
+
+/**
+ * Guarda el registro de tokens consumidos calculando el costo financiero
+ */
+async function logTokenUsage(projectId, provider, accountId, accountLabel, model, promptTokens, completionTokens) {
+  const logFile = path.join(DIRS.data, 'token-logs.json');
+  await asegurarDirectorio(DIRS.data);
+  
+  let logs = await leerJSON(logFile);
+  if (!logs || !Array.isArray(logs)) {
+    logs = [];
+  }
+  
+  let cost = 0;
+  try {
+    const modelsCatalog = await leerJSON(path.join(DIRS.data, 'models-catalog.json'));
+    const models = modelsCatalog?.models || [];
+    // Buscar coincidencia de modelo en catálogo
+    const modelMeta = models.find(m => m.id === model || m.openrouter_id === model || m.opencode_go_id === model);
+    if (modelMeta && modelMeta.pricing) {
+      const inputCost = (promptTokens / 1000000) * (modelMeta.pricing.input_per_million || 0);
+      const outputCost = (completionTokens / 1000000) * (modelMeta.pricing.output_per_million || 0);
+      cost = inputCost + outputCost;
+    }
+  } catch (e) {
+    console.error('Error al calcular costo del modelo:', e.message);
+  }
+  
+  let projectName = projectId;
+  try {
+    const projectFile = path.join(DIRS.projects, projectId, 'project.json');
+    const projData = await leerJSON(projectFile);
+    if (projData && projData.name) {
+      projectName = projData.name;
+    }
+  } catch (e) {}
+
+  logs.push({
+    timestamp: new Date().toISOString(),
+    projectId,
+    projectName,
+    provider,
+    accountId,
+    accountLabel,
+    model,
+    promptTokens,
+    completionTokens,
+    cost
+  });
+  
+  // Limitar logs a un máximo de 5000 entradas para evitar archivos pesados
+  if (logs.length > 5000) {
+    logs.shift();
+  }
+  
+  await escribirJSON(logFile, logs);
+}
+
+/**
+ * Proxy reverso transparente para capturar las peticiones API y contar tokens
+ */
+app.post('/api/proxy/:projectId/:accountId/chat/completions', asyncHandler(async (req, res) => {
+  const { projectId, accountId } = req.params;
+  const config = await getAccountRealConfig(accountId);
+  
+  if (!config) {
+    return res.status(404).json({ error: `La cuenta ${accountId} no existe en el sistema` });
+  }
+  
+  const { apiKey, baseURL } = config;
+  const targetUrl = `${baseURL}/chat/completions`;
+  
+  // Clonar cabeceras, inyectando la clave del proveedor correspondiente
+  const headers = { ...req.headers };
+  delete headers.host;
+  delete headers['content-length'];
+  headers['Authorization'] = `Bearer ${apiKey}`;
+  headers['Content-Type'] = 'application/json';
+  
+  const isStream = req.body.stream === true;
+  const body = JSON.stringify(req.body);
+  
+  try {
+    const apiRes = await fetch(targetUrl, {
+      method: 'POST',
+      headers,
+      body,
+    });
+    
+    res.status(apiRes.status);
+    for (const [key, val] of apiRes.headers.entries()) {
+      if (key !== 'content-encoding' && key !== 'transfer-encoding') {
+        res.setHeader(key, val);
+      }
+    }
+    
+    if (isStream) {
+      const reader = apiRes.body.getReader();
+      const decoder = new TextDecoder();
+      
+      let fullResponseText = '';
+      let detectedUsage = null;
+      
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          
+          res.write(value);
+          
+          const text = decoder.decode(value, { stream: true });
+          const lines = text.split('\n');
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const dataStr = line.slice(6).trim();
+              if (dataStr === '[DONE]') continue;
+              try {
+                const parsed = JSON.parse(dataStr);
+                if (parsed.usage) {
+                  detectedUsage = parsed.usage;
+                }
+                if (parsed.choices?.[0]?.delta?.content) {
+                  fullResponseText += parsed.choices[0].delta.content;
+                }
+              } catch (e) {
+                // Fragmentos de JSON incompletos en el stream
+              }
+            }
+          }
+        }
+      } finally {
+        reader.releaseLock();
+      }
+      
+      res.end();
+      
+      // Registrar log de stream asíncronamente
+      try {
+        const modelName = req.body.model;
+        let promptTokens = 0;
+        let completionTokens = 0;
+        
+        if (detectedUsage) {
+          promptTokens = detectedUsage.prompt_tokens;
+          completionTokens = detectedUsage.completion_tokens;
+        } else {
+          // Estimación robusta (1 token ~= 4 caracteres aprox)
+          const inputPrompt = req.body.messages?.map(m => m.content || '').join('\n') || '';
+          promptTokens = Math.ceil(inputPrompt.length / 4);
+          completionTokens = Math.ceil(fullResponseText.length / 4);
+        }
+        
+        await logTokenUsage(projectId, config.provider, accountId, config.label, modelName, promptTokens, completionTokens);
+      } catch (err) {
+        console.error('Error al registrar logs en streaming proxy:', err);
+      }
+      
+    } else {
+      const json = await apiRes.json();
+      res.json(json);
+      
+      // Registrar log JSON asíncronamente
+      try {
+        const modelName = req.body.model;
+        const promptTokens = json.usage?.prompt_tokens || 0;
+        const completionTokens = json.usage?.completion_tokens || 0;
+        await logTokenUsage(projectId, config.provider, accountId, config.label, modelName, promptTokens, completionTokens);
+      } catch (err) {
+        console.error('Error al registrar logs en JSON proxy:', err);
+      }
+    }
+  } catch (error) {
+    console.error('Fallo en petición al proxy reverso:', error);
+    res.status(500).json({ error: `Fallo en el proxy del Orquestador: ${error.message}` });
+  }
+}));
+
+/**
+ * GET /api/stats/token-logs — Obtener todos los consumos
+ */
+app.get('/api/stats/token-logs', asyncHandler(async (req, res) => {
+  const logFile = path.join(DIRS.data, 'token-logs.json');
+  const logs = await leerJSON(logFile) || [];
+  res.json({ ok: true, logs });
+}));
+
 /**
  * Ruta catch-all para 404 en la API
  */
