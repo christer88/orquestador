@@ -1,6 +1,7 @@
 export default {
   accounts: [],
   providers: [],
+  currentEditId: null,
 
   render(container) {
     container.innerHTML = `
@@ -18,7 +19,7 @@ export default {
             <!-- Formulario Agregar -->
             <div class="card">
               <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: var(--space-2); margin-bottom: var(--space-4);">
-                <h3 style="margin: 0;">Registrar Cuenta</h3>
+                <h3 id="form-title" style="margin: 0;">Registrar Cuenta</h3>
                 <button class="btn btn--secondary btn--sm" onclick="window.appAccountManager.showCustomProviderModal()">➕ Añadir Proveedor</button>
               </div>
               <form id="account-form" onsubmit="event.preventDefault(); window.appAccountManager.saveAccount();">
@@ -53,7 +54,7 @@ export default {
                   </label>
                 </div>
 
-                <button type="submit" class="btn btn--primary" style="margin-top: var(--space-6); width: 100%;">Guardar Cuenta 💾</button>
+                <button type="submit" id="submit-btn" class="btn btn--primary" style="margin-top: var(--space-6); width: 100%;">Guardar Cuenta 💾</button>
               </form>
             </div>
 
@@ -169,6 +170,7 @@ export default {
                 </div>
                 <div style="display: flex; gap: 8px;">
                   <button class="btn btn--secondary btn--sm" onclick="window.appAccountManager.testConnection('${acc.id}', this)">Probar Conexión ⚡</button>
+                  <button class="btn btn--secondary btn--sm" onclick="window.appAccountManager.editAccount('${acc.id}')">Editar</button>
                   <button class="btn btn--danger btn--sm" onclick="window.appAccountManager.deleteAccount('${acc.id}')">Eliminar</button>
                 </div>
               </div>
@@ -193,16 +195,23 @@ export default {
         active: document.getElementById('acc-active').checked
       };
 
-      const res = await fetch('/api/accounts', {
-        method: 'POST',
+      const isEdit = !!this.currentEditId;
+      const url = isEdit ? `/api/accounts/${this.currentEditId}` : '/api/accounts';
+      const method = isEdit ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
 
       const resData = await res.json();
       if (resData.ok) {
-        alert('Cuenta agregada exitosamente.');
+        alert(isEdit ? 'Cuenta actualizada exitosamente.' : 'Cuenta agregada exitosamente.');
         document.getElementById('account-form').reset();
+        this.currentEditId = null;
+        document.getElementById('form-title').innerText = 'Registrar Cuenta';
+        document.getElementById('submit-btn').innerText = 'Guardar Cuenta 💾';
         await this.loadAccounts();
       } else {
         alert('Error al guardar la cuenta: ' + resData.error);
@@ -210,6 +219,22 @@ export default {
     } catch (e) {
       alert('Error de red: ' + e.message);
     }
+  },
+
+  editAccount(id) {
+    const acc = this.accounts.find(a => a.id === id);
+    if (!acc) return;
+    
+    this.currentEditId = id;
+    document.getElementById('acc-provider').value = acc.provider;
+    document.getElementById('acc-label').value = acc.label;
+    document.getElementById('acc-envkey').value = acc.envKey;
+    document.getElementById('acc-apikey').value = ''; // Don't pre-fill API key for security
+    document.getElementById('acc-active').checked = acc.active;
+    
+    document.getElementById('form-title').innerText = 'Editar Cuenta';
+    document.getElementById('submit-btn').innerText = 'Actualizar Cuenta 💾';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   },
 
   async deleteAccount(id) {

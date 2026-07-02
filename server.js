@@ -1116,6 +1116,10 @@ app.put('/api/accounts/:id', asyncHandler(async (req, res) => {
   if (indice === -1) {
     return res.status(404).json({ ok: false, error: `Cuenta '${req.params.id}' no encontrada` });
   }
+  
+  if (req.body.envKey && req.body.apiKey) {
+    await guardarVariableEntorno(req.body.envKey, req.body.apiKey);
+  }
 
   // Actualizar campos (preservar id y createdAt)
   cuentas[indice] = {
@@ -1127,6 +1131,17 @@ app.put('/api/accounts/:id', asyncHandler(async (req, res) => {
   };
 
   await escribirJSON(ACCOUNTS_FILE, cuentas);
+  
+  // Regenerar todos los proyectos para que los cambios surtan efecto inmediato
+  const proyectos = await leerProyectos();
+  for (const proy of proyectos) {
+    try {
+      await ejecutarGeneradores(proy);
+    } catch (e) {
+      console.warn(`No se pudo regenerar el proyecto ${proy.id}: ${e.message}`);
+    }
+  }
+
   res.json({ ok: true, account: cuentas[indice] });
 }));
 
